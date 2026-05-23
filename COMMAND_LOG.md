@@ -1100,3 +1100,19 @@
   - `COMMAND_LOG.md`
     - 목적: 이번 강동구/Gandong 문제 검토와 수정 명령 기록.
     - 생성 파일: 없음.
+
+### Streamlit Cloud folium 모듈 누락 오류 확인
+
+- 사용자 요청: Streamlit Cloud 배포 중 `ModuleNotFoundError`가 `import folium`에서 발생하는 문제 해결 방법 안내.
+- `Get-Content -Encoding UTF8 "requirements.txt"`
+  - 목적: 배포 의존성 파일에 `folium`과 관련 패키지가 포함되어 있는지 확인.
+  - 결과: `folium>=0.17`, `streamlit-folium>=0.22`, `branca>=0.7` 포함 확인.
+  - 생성 파일: 없음.
+- `git status --short`
+  - 목적: 로컬 작업공간의 미커밋 변경 여부 확인.
+  - 결과: 출력 없음. 로컬 Git 상태 깨끗함.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Force | Where-Object { $_.Name -match 'requirements|environment|packages|Pipfile|pyproject' } | Select-Object Name,Length,LastWriteTime`
+  - 목적: Streamlit Cloud가 읽을 수 있는 의존성 파일 존재 여부 확인.
+  - 결과: `requirements.txt`, `environment.yml` 확인.
+  - 생성 파일: 없음.
