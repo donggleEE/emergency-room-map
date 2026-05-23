@@ -1,7 +1,9 @@
-pandas>=2.2
-requests>=2.32
-streamlit>=1.37
-folium>=0.17
-streamlit-folium>=0.22
-branca>=0.7
-jinja2>=3.1
+streamlit
+pandas
+numpy
+requests
+folium
+streamlit-folium
+branca
+jinja2
+plotly
