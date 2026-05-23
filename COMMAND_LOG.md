@@ -1,0 +1,1102 @@
+# 명령어 및 생성 파일 기록
+
+프로젝트: `emergency_room_project`
+
+이 문서는 Codex와 함께 작업하는 동안 실행한 주요 명령어와 그 결과 생성된 파일을 기록한다.
+
+## 2026-05-23
+
+### 초기 정리
+
+프로젝트 진행 방향을 기존 웹 기반 응급실 병상 시각화 작업으로 정리했다. 이전에 검토했던 모바일 앱 및 앱 내부 임베디드 데이터베이스 방향은 현재 작업 범위에서 제외했다.
+
+### 실행한 명령어
+
+- `Get-ChildItem -Force`
+  - 목적: 프로젝트 루트 구성 확인.
+  - 생성 파일: 없음.
+- `git status --short`
+  - 목적: 현재 디렉터리가 Git 저장소인지와 변경 상태 확인.
+  - 결과: Git 저장소가 아님.
+  - 생성 파일: 없음.
+- `rg --files`
+  - 목적: 프로젝트 파일 목록 확인.
+  - 생성 파일: 없음.
+- `Get-Content -TotalCount 80 "02_visualization_app.py"`
+  - 목적: 현재 Streamlit/Folium 시각화 앱 진입점 확인.
+  - 생성 파일: 없음.
+- `Get-Content -TotalCount 80 "03_realtime_data.py"`
+  - 목적: 실시간 응급실 데이터 수집 스크립트 확인.
+  - 생성 파일: 없음.
+- `Get-Content -TotalCount 5 "data\hospital_master.csv"`
+  - 목적: 병원 마스터 CSV 컬럼과 예시 행 확인.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Force .vscode`
+  - 목적: 기존 에디터 설정 확인.
+  - 생성 파일: 없음.
+- `Get-Content -TotalCount 5 "data\hospital_er_preprocessed_wide.csv"`
+  - 목적: 병합된 응급실 전처리 데이터의 컬럼과 예시 행 확인.
+  - 생성 파일: 없음.
+- `Get-Content -TotalCount 60 "data\column_dictionary.csv"`
+  - 목적: 앱 필드 매핑을 위한 데이터 사전 확인.
+  - 생성 파일: 없음.
+- `Get-Content COMMAND_LOG.md`
+  - 목적: 기존 명령어 기록 확인.
+  - 생성 파일: 없음.
+- `rg -n "[제외된 방향 관련 키워드]"`
+  - 목적: 현재 작업공간에 제외된 방향의 문구가 남아 있는지 확인.
+  - 결과: 정리 대상 기록 외 활성 프로젝트 파일에서는 발견되지 않음.
+  - 생성 파일: 없음.
+- `rg --files -g "*.md"`
+  - 목적: Markdown 파일 목록 확인.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Force AGENTS.md`
+  - 목적: `AGENTS.md` 존재 여부 확인.
+  - 결과: 파일이 존재하지 않음.
+  - 생성 파일: 없음.
+- `Get-Content PROJECT_CONTEXT.md`
+  - 목적: 프로젝트 개요 문서 내용 확인.
+  - 생성 파일: 없음.
+- `Get-Content AGENTS.md`
+  - 목적: 작업 지침 문서가 한국어 내용으로 작성되었는지 확인.
+  - 생성 파일: 없음.
+- `Get-Content PROJECT_CONTEXT.md`
+  - 목적: 프로젝트 개요 문서가 한국어 내용으로 작성되었는지 확인.
+  - 생성 파일: 없음.
+- `Get-Content COMMAND_LOG.md`
+  - 목적: 명령어 기록 문서가 한국어 내용으로 작성되었는지 확인.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Force .codex`
+  - 목적: 프로젝트 루트에 `.codex` 설정 폴더가 있는지 확인.
+  - 결과: 처음 확인 시 폴더가 존재하지 않았고, 설정 파일 생성 후 `config.toml`이 존재함을 확인함.
+  - 생성 파일: 없음.
+- `Get-Content AGENTS.md`
+  - 목적: 설정 파일 생성 전 프로젝트 작업 지침 확인.
+  - 생성 파일: 없음.
+- `Get-Content .codex\config.toml`
+  - 목적: 생성된 Codex 기본 설정 파일 내용 확인.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Force .codex`
+  - 목적: 기존 `.codex` 구성 확인.
+  - 생성 파일: 없음.
+- `Get-Content .codex\config.toml`
+  - 목적: 에이전트 설정 추가 전 현재 설정 확인.
+  - 생성 파일: 없음.
+- `Get-Content AGENTS.md`
+  - 목적: 에이전트 생성 전 프로젝트 작업 지침 확인.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Recurse -Force .codex`
+  - 목적: `project_manager` 에이전트 파일 생성 여부 확인.
+  - 생성 파일: 없음.
+- `Get-Content .codex\agents\project_manager.md`
+  - 목적: 생성된 `project_manager` 에이전트 정의 확인.
+  - 생성 파일: 없음.
+- `Get-Content .codex\config.toml`
+  - 목적: 설정 파일에 `project_manager` 에이전트 연결이 반영되었는지 확인.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Recurse -Force .codex`
+  - 목적: 기존 에이전트 구성 확인 및 `frontend` 에이전트 생성 여부 확인.
+  - 생성 파일: 없음.
+- `Get-Content .codex\config.toml`
+  - 목적: `frontend` 에이전트 설정 추가 전후의 설정 파일 내용 확인.
+  - 생성 파일: 없음.
+- `Get-Content AGENTS.md`
+  - 목적: 에이전트 생성 전후의 프로젝트 작업 지침 확인.
+  - 생성 파일: 없음.
+- `Get-Content PROJECT_CONTEXT.md`
+  - 목적: 화면 UI 에이전트 정의 전 프로젝트 방향 확인.
+  - 생성 파일: 없음.
+- `Get-Content .codex\agents\frontend.md`
+  - 목적: 생성된 `frontend` 에이전트 정의 확인.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Recurse -Force .codex`
+  - 목적: 기존 에이전트 구성 확인 및 `backend` 에이전트 생성 여부 확인.
+  - 생성 파일: 없음.
+- `Get-Content .codex\config.toml`
+  - 목적: `backend` 에이전트 설정 추가 전후의 설정 파일 내용 확인.
+  - 생성 파일: 없음.
+- `Get-Content AGENTS.md`
+  - 목적: `backend` 에이전트 생성 전후의 프로젝트 작업 지침 확인.
+  - 생성 파일: 없음.
+- `Get-Content .codex\agents\backend.md`
+  - 목적: 생성된 `backend` 에이전트 정의 확인.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Recurse -Force .codex`
+  - 목적: 기존 에이전트 구성 확인 및 `tester` 에이전트 생성 여부 확인.
+  - 생성 파일: 없음.
+- `Get-Content .codex\config.toml`
+  - 목적: `tester` 에이전트 설정 추가 전후의 설정 파일 내용 확인.
+  - 생성 파일: 없음.
+- `Get-Content AGENTS.md`
+  - 목적: `tester` 에이전트 생성 전후의 프로젝트 작업 지침 확인.
+  - 생성 파일: 없음.
+- `Get-Content .codex\agents\tester.md`
+  - 목적: 생성된 `tester` 에이전트 정의 확인.
+  - 생성 파일: 없음.
+- `Get-Content .codex\config.toml`
+  - 목적: 에이전트별 모델 및 추론 강도 설정 추가 전후의 설정 파일 내용 확인.
+  - 결과: `project_manager`는 `gpt-5.5`와 `xhigh`, `frontend`, `backend`, `tester`는 `gpt-5.5`와 `medium`으로 설정됨.
+  - 생성 파일: 없음.
+
+### 생성된 파일
+
+- `COMMAND_LOG.md`
+  - 목적: 명령어 실행 및 생성 파일 기록.
+- `PROJECT_CONTEXT.md`
+  - 목적: 프로젝트 개요와 현재 진행 방향 기록.
+- `AGENTS.md`
+  - 목적: 프로젝트 작업 지침을 한국어로 기록.
+- `.codex/config.toml`
+  - 목적: 프로젝트 루트 기준 Codex 기본 설정 기록.
+- `.codex/agents/project_manager.md`
+  - 목적: 프로젝트 범위, 우선순위, 작업 기록, 산출물 정리를 관리하는 전용 에이전트 정의.
+- `.codex/agents/frontend.md`
+  - 목적: 응급실 병상 시각화 화면과 사용자 경험을 설계하고 개선하는 전용 에이전트 정의.
+- `.codex/agents/backend.md`
+  - 목적: 데이터 수집, 전처리, 파일 입출력, 앱 실행에 필요한 Python 로직을 설계하고 개선하는 전용 에이전트 정의.
+- `.codex/agents/tester.md`
+  - 목적: 작성되거나 수정된 코드와 데이터 산출물을 검증하는 전용 에이전트 정의.
+
+### backend 갱신 시각 표시 문제 분석
+
+- 사용자 요청
+  - `backend` 에이전트 역할로 `03_realtime_data.py`, `01_preprocess_er_data.py`, 데이터 갱신 상태 흐름을 확인하고, 업데이트 버튼 클릭 후 표시 문자열이 실제 갱신 시각으로 바뀌지 않는 문제를 분석함.
+  - 앱 UI 파일은 직접 수정하지 않고, 병원 좌표와 시군구 분류 불일치 문제의 원인 후보와 안전한 보정 전략을 backend 관점에서 정리함.
+- `Get-Content -Path 03_realtime_data.py`
+  - 목적: 실시간 데이터 수집, 상태 파일 작성, CSV 병합 흐름 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path 01_preprocess_er_data.py`
+  - 목적: 초기 전처리 단계의 수집 시각과 지역 조합 생성 로직 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path COMMAND_LOG.md`
+  - 목적: 기존 명령어 기록 확인.
+  - 생성 파일: 없음.
+- `rg -n "update|updated|time|시간|갱신|realtime|last|timestamp|COMMAND_LOG|시각" .`
+  - 목적: 갱신 시각 표시와 상태 파일 사용 위치 검색.
+  - 생성 파일: 없음.
+- `Get-Content -Path 02_visualization_app.py -Encoding UTF8`
+  - 목적: UI를 수정하지 않고, 화면이 `realtime_updated_at`과 상태 파일을 읽는 흐름만 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path data\last_update_status.txt -Encoding UTF8`
+  - 목적: 마지막 업데이트 실행 결과와 실패 여부 확인.
+  - 생성 파일: 없음.
+- `Import-Csv -Path data\hospital_er_preprocessed_wide.csv -Encoding UTF8`
+  - 목적: 병원별 `realtime_updated_at`, `collected_at`, `query_sido`, `query_sigungu` 값과 지역 불일치 샘플 확인.
+  - 생성 파일: 없음.
+- `py -m py_compile 03_realtime_data.py`
+  - 목적: 수정한 backend 스크립트 문법 검사 시도.
+  - 결과: `py` 런처가 없어 실행하지 못함.
+  - 생성 파일: 없음.
+- `Get-Command python,py`
+  - 목적: Python 실행 환경 확인.
+  - 결과: `python.exe`는 WindowsApps 스텁이고 `py`는 없음.
+  - 생성 파일: 없음.
+- `rg -n "SERVICE_KEY|ER_API|dotenv|\.env" .`
+  - 목적: API 키 설정 위치와 `.env` 사용 여부 확인.
+  - 결과: `03_realtime_data.py`에는 자리표시자 키가 있고, `.env`에는 `ER_API_KEY` 항목이 있음을 확인함.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Force`
+  - 목적: 프로젝트 루트의 `.env` 존재 여부 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path .env -Encoding UTF8 | ForEach-Object { ... }`
+  - 목적: 민감한 값을 출력하지 않고 `.env`의 키 이름만 확인.
+  - 결과: `ER_API_KEY` 항목 확인.
+  - 생성 파일: 없음.
+- `Select-String -Path 03_realtime_data.py -Pattern "여기에_네_Decoding|ER_API_KEY|SERVICE_KEY = load_service_key|last_update_status.json"`
+  - 목적: 자리표시자 키 제거와 상태 JSON 경로 반영 여부 확인.
+  - 생성 파일: 없음.
+- 수정 파일
+  - `03_realtime_data.py`
+    - 목적: `.env` 또는 환경변수에서 API 키를 읽도록 수정하고, 업데이트 실행 시각, 성공 여부, 갱신 병원 수, API 원자료 최신 갱신시각을 `data/last_update_status.json`으로 저장하도록 backend 상태 산출물 추가.
+    - 생성 파일: 다음 업데이트 실행 시 `data/last_update_status.json` 생성 예정.
+  - `COMMAND_LOG.md`
+    - 목적: 이번 요청과 실행한 주요 명령어 기록.
+
+### frontend 지도 렌더링 및 업데이트 시각 UI 개선
+
+- 사용자 요청
+  - `frontend` 에이전트 역할로 `02_visualization_app.py` 중심의 지도 로딩, 업데이트 시각 UI, GeoJSON 지역명, 시군구/마커 표시 문제를 최소 변경으로 개선.
+- `Get-Content -Path 02_visualization_app.py -TotalCount 260`
+  - 목적: Streamlit/Folium 앱의 현재 구조와 주요 상수, 데이터 로드 흐름 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path COMMAND_LOG.md -TotalCount 120`
+  - 목적: 기존 명령어 기록 형식 확인.
+  - 생성 파일: 없음.
+- `git status --short`
+  - 목적: 작업 전 변경 상태 확인.
+  - 결과: 현재 디렉터리는 Git 저장소가 아님.
+  - 생성 파일: 없음.
+- `rg -n "st_folium|folium|GeoJson|Marker|CircleMarker|updated|realtime|sigungu|sido|legend|Choropleth|FeatureGroup|LayerControl|button|cache|zoom" 02_visualization_app.py`
+  - 목적: 지도 생성, 레이어, 업데이트 버튼, 캐시 관련 코드 위치 검색.
+  - 생성 파일: 없음.
+- `Get-Content -Path data\korea_sido.geojson -TotalCount 20`
+  - 목적: 시도 GeoJSON 속성 필드와 영문 지역명 구조 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path data\korea_sigungu.geojson -TotalCount 20`
+  - 목적: 시군구 GeoJSON 속성 필드와 영문 지역명 구조 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path data\hospital_er_preprocessed_wide.csv -TotalCount 2`
+  - 목적: 병원 데이터의 한글 시도/시군구 필드와 갱신 시각 컬럼 확인.
+  - 생성 파일: 없음.
+- `python -m py_compile 02_visualization_app.py`
+  - 목적: 문법 검증 시도.
+  - 결과: `python.exe` 실행 실패로 검증하지 못함.
+  - 생성 파일: 없음.
+- `py -m py_compile 02_visualization_app.py`
+  - 목적: 대체 Python 런처로 문법 검증 시도.
+  - 결과: `py` 명령을 찾을 수 없어 검증하지 못함.
+  - 생성 파일: 없음.
+- `where.exe python`
+  - 목적: Python 실행 파일 위치 확인.
+  - 결과: 사용 가능한 Python 실행 파일을 찾지 못함.
+  - 생성 파일: 없음.
+- `Get-Command streamlit`
+  - 목적: Streamlit 앱 실행 가능 여부 확인.
+  - 결과: `streamlit` 명령을 찾을 수 없어 앱 부팅 검증은 수행하지 못함.
+  - 생성 파일: 없음.
+- `rg -n "ENGLISH_SIDO_ALIASES|ENGLISH_SIGUNGU_ALIASES|refresh_token|data_refresh_token|overview_mode|returned_objects|build_hospital_layer|hospital_markers_limited" 02_visualization_app.py`
+  - 목적: 수정한 핵심 로직 위치 확인.
+  - 생성 파일: 없음.
+- 수정 파일
+  - `02_visualization_app.py`
+    - 목적: `st_folium` 반환 객체 축소, 전국 화면 시군구/마커 과다 렌더링 제한, 업데이트 후 데이터 캐시 재읽기 토큰 적용, GeoJSON 영문 지역명 alias 보강.
+    - 생성 파일: 없음.
+  - `COMMAND_LOG.md`
+    - 목적: 이번 요청과 실행한 주요 명령어 기록.
+    - 생성 파일: 없음.
+
+### 팀 에이전트 기반 목표 기능 구현 통합
+
+- 사용자 요청
+  - `project_manager`, `backend`, `frontend`, `tester` 에이전트 역할로 현재 코드 수정 사항을 수행함.
+  - 목표: 지도 줌/이동/범례 적용 시 로딩 지연 개선, 업데이트 시각 문자열 갱신 문제 해결, 지도 내 영어 지역명 개선, 시군구 분할 지도와 병원 마커 표시 불일치 완화.
+- `rg -n "st_folium|folium|GeoJson|Choropleth|update|last_update|button|status|updated|realtime|SIGUNGU|sido|sigungu|tooltip|popup" "02_visualization_app.py"`
+  - 목적: 지도 생성, 레이어, 업데이트 버튼, 지역명 처리 관련 코드 위치 검색.
+  - 생성 파일: 없음.
+- `Get-Content -TotalCount 220 "02_visualization_app.py"`
+  - 목적: 웹 시각화 앱 상단 설정, 데이터 로드, 카테고리 구조 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Tail 220 "02_visualization_app.py"`
+  - 목적: 지도 출력과 하단 데이터 테이블 영역 확인.
+  - 생성 파일: 없음.
+- `Get-Content -TotalCount 120 "check_geojson.py"`
+  - 목적: GeoJSON 확인 스크립트 구조 확인.
+  - 생성 파일: 없음.
+- `Get-Content "02_visualization_app.py" | Select-Object -Skip ... -First ...`
+  - 목적: GeoJSON 이름 처리, 지도 레이어 생성, 실시간 업데이트, 지도 출력 구간별 코드 확인.
+  - 생성 파일: 없음.
+- `python -c "..."`
+  - 목적: GeoJSON/CSV 샘플을 Python으로 확인하려고 시도.
+  - 결과: `python.exe` 실행 실패로 수행하지 못함.
+  - 생성 파일: 없음.
+- `Get-Command python`
+  - 목적: Python 실행 파일 확인.
+  - 결과: WindowsApps `python.exe` 스텁으로 확인됨.
+  - 생성 파일: 없음.
+- `Get-Command py`
+  - 목적: Python 런처 확인.
+  - 결과: `py` 명령 없음.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 "02_visualization_app.py"`
+  - 목적: PowerShell 기본 출력에서 깨져 보이는 한글을 UTF-8로 확인.
+  - 생성 파일: 없음.
+- `Select-String -Path "02_visualization_app.py" -Pattern "..."`
+  - 목적: 성능 개선, 업데이트 상태, 레이어 제한, `last_update_status.json` 연결 코드 반영 여부 확인.
+  - 생성 파일: 없음.
+- `Select-String -Path "03_realtime_data.py" -Pattern "..."`
+  - 목적: API 키 로드, 상태 JSON 저장, 갱신 성공 여부 기록 코드 확인.
+  - 생성 파일: 없음.
+- `Get-Command streamlit`
+  - 목적: Streamlit 앱 실행 가능 여부 확인.
+  - 결과: `streamlit` 명령 없음.
+  - 생성 파일: 없음.
+- `python -m py_compile 01_preprocess_er_data.py 02_visualization_app.py 03_realtime_data.py`
+  - 목적: Python 문법 검사 시도.
+  - 결과: `python.exe` 실행 실패로 수행하지 못함.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Force data\last_update_status.*`
+  - 목적: 현재 상태 파일 존재 여부 확인.
+  - 결과: `data/last_update_status.txt`만 존재하며, `data/last_update_status.json`은 다음 정상 업데이트 실행 시 생성 예정.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Path . -Recurse -Filter python.exe`
+  - 목적: 작업공간 내부 Python 실행 파일 존재 여부 확인.
+  - 결과: 없음.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Path $env:LOCALAPPDATA\Programs\Python -Recurse -Filter python.exe`
+  - 목적: 사용자 로컬 Python 설치 위치 확인.
+  - 결과: 없음.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Path C:\Users\dongg -Recurse -Filter python.exe`
+  - 목적: 사용자 폴더 전체에서 Python 실행 파일 검색 시도.
+  - 결과: 접근 거부로 중단됨.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 -Tail 140 COMMAND_LOG.md`
+  - 목적: 기존 명령어 기록 형식과 최근 기록 확인.
+  - 생성 파일: 없음.
+- 수정 파일
+  - `02_visualization_app.py`
+    - 목적: 지도 조작 시 Streamlit 재실행 유발 반환 객체 제거, 전국 화면 시군구/병원 마커 과다 렌더링 제한, 업데이트 상태 JSON 표시, GeoJSON 한글 지역명 우선 처리.
+    - 생성 파일: 없음.
+  - `03_realtime_data.py`
+    - 목적: API 키를 `.env`/환경변수에서 읽고, 업데이트 실행 상태를 txt/json으로 남김.
+    - 생성 파일: 다음 정상 업데이트 실행 시 `data/last_update_status.json` 생성 예정.
+  - `COMMAND_LOG.md`
+    - 목적: 팀 에이전트 작업과 실행 명령 기록.
+    - 생성 파일: 없음.
+
+### project_manager 점검 및 소규모 정리
+
+- 사용자 요청
+  - `project_manager` 에이전트 역할로 `02_visualization_app.py`, `03_realtime_data.py`, `.codex/agents/*.md`, `.codex/config.toml`, `AGENTS.md`, `PROJECT_CONTEXT.md`, `COMMAND_LOG.md`, 파일 구조를 점검함.
+  - 목표: 최근 성능/업데이트/지역명 수정 이후 중복 상수, 사용되지 않는 함수, 깨진 값, 논리 충돌, 앱 실행 위험, 상태 파일 기록, 조기 종료 위치, 타입 힌트 호환성, 문서 구조와 파일 구조를 확인하고 작은 범위 수정 수행.
+- `git status --short`
+  - 목적: 변경 추적 상태 확인.
+  - 결과: 현재 폴더는 git 저장소가 아님.
+  - 생성 파일: 없음.
+- `rg --files`
+  - 목적: 프로젝트 파일 목록 확인.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Force`
+  - 목적: 루트 폴더의 실제 파일과 폴더 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 -Path .codex\agents\*.md`, `Get-Content -Encoding UTF8 -Path .codex\config.toml`
+  - 목적: 에이전트 정의와 프로젝트 설정이 현재 웹 기반 Python 구조와 맞는지 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 -Path PROJECT_CONTEXT.md`, `Get-Content -Encoding UTF8 -Path AGENTS.md`, `Get-Content -Encoding UTF8 -Path COMMAND_LOG.md -Tail 80`
+  - 목적: 프로젝트 문서와 명령 기록 형식 확인.
+  - 생성 파일: 없음.
+- `rg -n "^[A-Z_]+\s*=|^def |^class |STATUS|last_update|LAST_UPDATE|UPDATE|API|load_dotenv|dotenv|return|sys\.exit|exit\(|if __name__|from typing|\| None|dict\[|list\[" 02_visualization_app.py`
+  - 목적: 시각화 앱의 상수, 함수, 상태 파일, 업데이트 실행 관련 코드 위치 확인.
+  - 생성 파일: 없음.
+- `rg -n "^[A-Z_]+\s*=|^def |^class |STATUS|last_update|LAST_UPDATE|UPDATE|API|load_dotenv|dotenv|return|sys\.exit|exit\(|if __name__|from typing|\| None|dict\[|list\[" 03_realtime_data.py`
+  - 목적: 실시간 수집 스크립트의 API 키 로드, 상태 파일 기록, 조기 종료, 타입 힌트 위치 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 -Path 02_visualization_app.py | Select-Object -Skip ... -First ...`
+  - 목적: 데이터 로드, 상태 요약, GeoJSON 지역명 처리, 지도 레이어, 실시간 업데이트, 사이드바 표시 구간 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 -Path 03_realtime_data.py | Select-Object -Skip ... -First ...`
+  - 목적: API 호출, 지역 범위 설정, 기존 데이터 유지, 원자료 저장, 최종 병합과 상태 기록 흐름 확인.
+  - 생성 파일: 없음.
+- `Select-String`/`rg` 기반 함수명 사용 빈도 확인
+  - 목적: 사용되지 않는 함수 후보 확인.
+  - 결과: 주요 함수는 모두 정의 외 호출 지점이 확인됨.
+  - 생성 파일: 없음.
+- `rg -n "\?|�|ì|í|Ã|Â|NaN|nan|None|TODO|FIXME|debug_|_latest\.csv|copy" 02_visualization_app.py 03_realtime_data.py AGENTS.md PROJECT_CONTEXT.md COMMAND_LOG.md .codex\agents .codex\config.toml`
+  - 목적: 깨진 인코딩 값, 디버그/최신 원자료 산출물, 복사본 파일 참조 확인.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Force data`, `Get-ChildItem -Force data -Filter "*latest*"`, `Get-ChildItem -Force data -Filter "debug_*"`
+  - 목적: 현재 데이터 폴더와 생성 예정/디버그 파일의 실제 존재 여부 확인.
+  - 결과: `_latest.csv`, `debug_*.csv`, `last_update_status.json`은 현재 없음.
+  - 생성 파일: 없음.
+- `python -m py_compile 01_preprocess_er_data.py 02_visualization_app.py 03_realtime_data.py`
+  - 목적: Python 문법 검사 시도.
+  - 결과: 현재 환경의 `python.exe` 실행 실패로 수행하지 못함.
+  - 생성 파일: 없음.
+- `Get-Command python`, `Get-Command streamlit`
+  - 목적: Python과 Streamlit 실행 가능 여부 확인.
+  - 결과: `python.exe`는 Microsoft Store 스텁으로 확인되고 실행 실패, `streamlit` 명령은 없음.
+  - 생성 파일: 없음.
+- `Import-Csv -Encoding UTF8 data\hospital_er_preprocessed_wide.csv`
+  - 목적: 앱 핵심 데이터의 필수 컬럼, 행 수, 좌표 범위, `hpid` 중복 확인.
+  - 결과: 534행, 필수 컬럼 누락 없음, `hpid` 중복 없음, 좌표 누락 행 1개 확인.
+  - 생성 파일: 없음.
+- `Import-Csv -Encoding UTF8 data\hospital_master.csv`, `data\realtime_beds_wide.csv`, `data\severe_disease_wide.csv`, `data\column_dictionary.csv`
+  - 목적: 핵심 CSV 파일 행 수 확인.
+  - 결과: 병원 마스터 534행, 실시간 병상 418행, 중증질환 416행, 컬럼 사전 169행.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 -Path data\korea_sido.geojson -TotalCount 1`, `Get-Content -Encoding UTF8 -Path data\korea_sigungu.geojson -TotalCount 1`
+  - 목적: GeoJSON 파일 시작 구조 간단 확인.
+  - 결과: 두 파일 모두 `{`로 시작함.
+  - 생성 파일: 없음.
+- 수정 파일
+  - `02_visualization_app.py`
+    - 목적: 상태 텍스트 파일 경로 상수화, 상태 JSON의 `notes` 표시, JSON이 없을 때 기존 txt 상태 표시 fallback 추가.
+    - 생성 파일: 없음.
+  - `03_realtime_data.py`
+    - 목적: API 키/필수 파일/지역 조합 실패 시 JSON과 txt 상태를 함께 기록하고 종료 코드 1로 종료하도록 수정, 기존 데이터 로드와 원자료 출력 중복 정리.
+    - 생성 파일: 다음 실행 상황에 따라 `data/last_update_status.json`, `data/realtime_beds_raw_latest.csv`, `data/severe_disease_raw_latest.csv`, `data/debug_realtime_beds_no_hpid.csv`, `data/debug_severe_disease_no_hpid.csv`가 생성될 수 있음.
+  - `PROJECT_CONTEXT.md`
+    - 목적: 활성 앱 파일, 보존 복사본, 실행 시 생성 가능한 상태/원자료/디버그 산출물 구분 보강.
+    - 생성 파일: 없음.
+  - `COMMAND_LOG.md`
+    - 목적: 이번 점검과 실행 명령 기록.
+    - 생성 파일: 없음.
+
+### 메인 Codex 통합 확인 및 추가 정리
+
+- `Get-ChildItem -Force`
+  - 목적: project_manager 점검 후 루트 파일 구조 확인.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Recurse -Force .codex`
+  - 목적: 에이전트 설정 폴더 구조 확인.
+  - 생성 파일: 없음.
+- `Select-String -Path "02_visualization_app.py" -Pattern "NATIONWIDE_VALUE|ALL_SIGUNGU_VALUE|ALL_SIDO_VALUES|ALL_SIGUNGU_VALUES|MAX_OVERVIEW_HOSPITAL_MARKERS|MAX_HOSPITAL_MARKERS|is_all_sido|is_all_sigungu|overview_mode|returned_objects|last_update_status.json"`
+  - 목적: 최근 수정 과정에서 생긴 중복 상수와 미사용 함수 후보 확인.
+  - 결과: 중복/미사용 후보를 확인하고 정리함.
+  - 생성 파일: 없음.
+- `Select-String -Path "03_realtime_data.py" -Pattern "def load_service_key|SERVICE_KEY|STATUS_JSON_PATH|write_status_json|SystemExit|str \| None|from __future__"`
+  - 목적: API 키 로드, 상태 JSON 기록, 타입 힌트 호환성 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 "03_realtime_data.py" | Select-Object -First 12`
+  - 목적: `from __future__ import annotations` 적용 여부 확인.
+  - 생성 파일: 없음.
+- `Get-Command python`
+  - 목적: Python 실행 환경 재확인.
+  - 결과: WindowsApps `python.exe` 스텁으로 확인됨.
+  - 생성 파일: 없음.
+- `Get-Command streamlit`
+  - 목적: Streamlit 실행 환경 재확인.
+  - 결과: `streamlit` 명령 없음.
+  - 생성 파일: 없음.
+- `Select-String -Path "02_visualization_app.py" -Pattern "UPDATE_STATUS_TXT_PATH|UPDATE_STATUS_JSON_PATH|format_update_status_summary|notes|상태 파일"`
+  - 목적: project_manager가 추가한 상태 파일 fallback과 JSON notes 표시 확인.
+  - 생성 파일: 없음.
+- `Select-String -Path "03_realtime_data.py" -Pattern "write_failure_and_exit|SystemExit|STATUS_JSON_PATH|from __future__"`
+  - 목적: 실패 상태 기록과 비정상 종료 코드 처리 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 "PROJECT_CONTEXT.md"`
+  - 목적: 파일 구조 메모 보강 내용 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 -Tail 80 "COMMAND_LOG.md"`
+  - 목적: 최근 명령 기록 확인.
+  - 생성 파일: 없음.
+- 수정 파일
+  - `02_visualization_app.py`
+    - 목적: `NATIONWIDE_VALUE`, `ALL_SIGUNGU_VALUE`, `MAX_HOSPITAL_MARKERS` 중복 선언과 미사용 `ALL_SIDO_VALUES`, `ALL_SIGUNGU_VALUES`, `is_all_sido`, `is_all_sigungu` 정리.
+    - 생성 파일: 없음.
+  - `03_realtime_data.py`
+    - 목적: `str | None`, `dict | None` 타입 힌트의 런타임 평가 위험을 낮추기 위해 `from __future__ import annotations` 추가.
+    - 생성 파일: 없음.
+
+### Pylance 누락 import 문제 해결 설정
+
+- 사용자 요청
+  - VS Code Problems 패널에서 `folium`, `folium.features`, `streamlit_folium`, `branca.element` import를 Pylance가 찾지 못하는 문제 해결.
+- `Get-ChildItem -Force .vscode`
+  - 목적: VS Code 프로젝트 설정 파일 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 .vscode\settings.json`
+  - 목적: 기존 Python 환경 설정 확인.
+  - 결과: conda 환경/패키지 매니저를 사용하도록 설정되어 있었으나 현재 `conda` 명령은 PATH에 없음.
+  - 생성 파일: 없음.
+- `rg --files -g "requirements*.txt" -g "pyproject.toml" -g "environment*.yml" -g "Pipfile"`
+  - 목적: 기존 의존성 선언 파일 존재 여부 확인.
+  - 결과: 기존 의존성 파일 없음.
+  - 생성 파일: 없음.
+- `Get-Command python`
+  - 목적: Python 실행 파일 확인.
+  - 결과: WindowsApps `python.exe` 스텁으로 확인됨.
+  - 생성 파일: 없음.
+- `Get-Command conda`
+  - 목적: conda 사용 가능 여부 확인.
+  - 결과: `conda` 명령 없음.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 COMMAND_LOG.md | Select-Object -Last 60`
+  - 목적: 명령 기록 형식 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 AGENTS.md`
+  - 목적: 프로젝트 문서 작성 규칙과 주요 파일 목록 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 requirements.txt`
+  - 목적: 새 pip 의존성 파일 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 environment.yml`
+  - 목적: 새 conda 환경 파일 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 .vscode\settings.json`
+  - 목적: VS Code Python 분석 환경 설정 확인.
+  - 생성 파일: 없음.
+- `rg -n "folium|streamlit_folium|branca|streamlit|pandas|requests|jinja2" requirements.txt environment.yml .vscode\settings.json`
+  - 목적: 누락 import 패키지가 의존성 파일에 선언되었는지 확인.
+  - 생성 파일: 없음.
+- 수정 파일
+  - `requirements.txt`
+    - 목적: pip 기반 실행 환경에서 필요한 패키지 선언.
+    - 생성 파일: `requirements.txt`
+  - `environment.yml`
+    - 목적: conda 기반 실행 환경에서 필요한 패키지 선언.
+    - 생성 파일: `environment.yml`
+  - `.vscode/settings.json`
+    - 목적: 존재하지 않는 conda 기본 설정 대신 프로젝트 `.venv`와 pip 기반 Python 환경을 우선 사용하도록 설정.
+    - 생성 파일: 없음.
+  - `PROJECT_CONTEXT.md`
+    - 목적: 새 의존성 파일을 주요 파일 목록에 반영.
+    - 생성 파일: 없음.
+  - `AGENTS.md`
+    - 목적: 새 의존성 파일을 주요 파일 목록에 반영.
+    - 생성 파일: 없음.
+
+### backend 주도 웹 실행 흐름 정리
+
+- 사용자 요청
+  - 팀 에이전트가 현재 웹 실행에서 꼬여 있는 코드나 부족한 문제점을 파악하고 수정하되, backend 에이전트가 주도적으로 수행하도록 요청함.
+- `Get-Content -Encoding UTF8 .vscode\settings.json`
+  - 목적: VS Code Python 환경 설정 확인.
+  - 결과: conda 환경 매니저와 패키지 매니저를 사용하도록 정리됨.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 .vscode\tasks.json`
+  - 목적: VS Code 작업 정의 확인.
+  - 결과: 선택된 Python 인터프리터로 Streamlit 앱 실행 및 문법 검사 작업을 수행하도록 정의됨.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 requirements.txt`
+  - 목적: pip 의존성 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 environment.yml`
+  - 목적: conda `ponggle` 환경 정의 확인.
+  - 생성 파일: 없음.
+- `Select-String -Path "02_visualization_app.py", "03_realtime_data.py" -Pattern "..."`
+  - 목적: 상태 파일, subprocess 실행, API 키 로드, 실패 상태 처리, 캐시 갱신 관련 코드 확인.
+  - 생성 파일: 없음.
+- `Get-Command conda`
+  - 목적: 현재 터미널에서 conda 사용 가능 여부 확인.
+  - 결과: `conda` 명령 없음.
+  - 생성 파일: 없음.
+- `python --version`
+  - 목적: 현재 터미널 Python 확인.
+  - 결과: WindowsApps `python.exe` 스텁 실행 실패.
+  - 생성 파일: 없음.
+- 수정 파일
+  - `.vscode/settings.json`
+    - 목적: 특정 `.venv` 경로 고정 대신 VS Code에서 선택한 conda 인터프리터를 사용하도록 설정.
+    - 생성 파일: 없음.
+  - `.vscode/tasks.json`
+    - 목적: VS Code에서 선택된 Python 인터프리터로 Streamlit 앱 실행과 Python 문법 검사를 수행하는 작업 추가.
+    - 생성 파일: `.vscode/tasks.json`
+  - `02_visualization_app.py`
+    - 목적: 프로젝트 기준 절대 경로 사용, subprocess `cwd` 고정, 실패 시 상태 JSON/txt와 stdout/stderr 표시, 병원 마커 제한 조건 통일.
+    - 생성 파일: 없음.
+  - `03_realtime_data.py`
+    - 목적: `.env`와 `data` 접근을 스크립트 기준 경로로 고정, 상태 JSON에 `success` 기록, 모든 갱신 실패 시 종료 코드 1 반환.
+    - 생성 파일: 없음.
+  - `requirements.txt`
+    - 목적: Python 3.12 기준 주요 패키지 최소 버전 명시.
+    - 생성 파일: 없음.
+  - `environment.yml`
+    - 목적: conda 환경명을 `ponggle`, Python 버전을 `3.12.13`으로 정리.
+    - 생성 파일: 없음.
+  - `PROJECT_CONTEXT.md`, `AGENTS.md`
+    - 목적: VS Code 작업 정의 파일과 실행 환경 파일을 주요 파일 목록에 반영.
+    - 생성 파일: 없음.
+
+### tester 최종 검증
+
+- `Select-String -Path "02_visualization_app.py" -Pattern "BASE_DIR|def project_path|DATA_PATH|PREPROCESS_SCRIPT|UPDATE_STATUS|def load_update_status_text|def should_limit_hospital_markers|returned_objects=\[\]"`
+  - 목적: 앱 실행 경로, 상태 파일, 병원 마커 제한, 지도 반환 객체 설정 확인.
+  - 결과: 정적 확인 통과.
+  - 생성 파일: 없음.
+- `Select-String -Path "03_realtime_data.py" -Pattern "BASE_DIR|DATA_DIR|env_path|write_failure_and_exit|success|raise SystemExit\(1\)"`
+  - 목적: 스크립트 기준 경로, `.env` 로드, 실패 상태 기록과 종료 코드 확인.
+  - 결과: 정적 확인 통과.
+  - 생성 파일: 없음.
+- `Get-Command conda`
+  - 목적: 현재 터미널에서 conda 확인.
+  - 결과: `conda` 명령 없음.
+  - 생성 파일: 없음.
+- `python --version`
+  - 목적: 현재 터미널 Python 확인.
+  - 결과: WindowsApps `python.exe` 스텁 실행 실패.
+  - 생성 파일: 없음.
+- 검증 결과
+  - `02_visualization_app.py`, `03_realtime_data.py`, `.vscode/settings.json`, `.vscode/tasks.json`, `requirements.txt`, `environment.yml` 정적 검증 통과.
+  - 현재 셸 PATH 문제로 `py_compile`, `streamlit run`은 수행하지 못함.
+
+### VS Code Problems 원인 확인
+
+- 사용자 요청
+  - VS Code Problems가 23개 생긴 상황에서 사용자가 해야 할 내용과 터미널 구동 시 에러 가능성을 자세히 설명해 달라고 요청함.
+- `Get-Content -Encoding UTF8 .vscode\settings.json`
+  - 목적: VS Code Python 인터프리터 설정 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 requirements.txt`
+  - 목적: pip 의존성 목록 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 environment.yml`
+  - 목적: conda 의존성 목록 확인.
+  - 생성 파일: 없음.
+- `Select-String -Path "01_preprocess_er_data.py","02_visualization_app.py","03_realtime_data.py","check_geojson.py" -Pattern "^import |^from "`
+  - 목적: 코드에서 사용하는 외부 패키지 목록 확인.
+  - 결과: `requests`, `pandas`, `streamlit`, `folium`, `streamlit_folium`, `branca`, `jinja2`가 주요 외부 의존성임.
+  - 생성 파일: 없음.
+- `Test-Path .venv\Scripts\python.exe`
+  - 목적: VS Code 설정이 가리키는 프로젝트 가상환경 존재 여부 확인.
+  - 결과: 존재하지 않음.
+  - 생성 파일: 없음.
+- `Get-Command python`
+  - 목적: 현재 터미널의 Python 실행 파일 확인.
+  - 결과: Microsoft Store WindowsApps 스텁으로 확인됨.
+  - 생성 파일: 없음.
+- `Get-Command py`
+  - 목적: Python Launcher 존재 여부 확인.
+  - 결과: 없음.
+  - 생성 파일: 없음.
+- `Get-Command streamlit`
+  - 목적: Streamlit CLI 실행 가능 여부 확인.
+  - 결과: 없음.
+  - 생성 파일: 없음.
+- `Test-Path data\hospital_er_preprocessed_wide.csv`, `Test-Path data\korea_sido.geojson`, `Test-Path data\korea_sigungu.geojson`, `Test-Path .env`
+  - 목적: 앱 실행에 필요한 핵심 데이터 파일과 환경 파일 존재 여부 확인.
+  - 결과: 모두 존재함.
+  - 생성 파일: 없음.
+
+### backend lead 웹 실행/상태 파일 흐름 점검
+
+- 사용자 요청
+  - `backend lead` 역할로 `03_realtime_data.py`, 실행 환경 파일, `.vscode/settings.json`, 상태 파일 기록, API 키 로드, 업데이트 버튼의 subprocess 흐름을 우선 점검하고 작은 범위에서 수정.
+- `git status --short`
+  - 목적: 변경 추적 상태 확인.
+  - 결과: 현재 폴더는 Git 저장소가 아님.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Force`
+  - 목적: 프로젝트 루트 파일과 폴더 구성 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Raw 03_realtime_data.py`
+  - 목적: 실시간 데이터 수집, API 키 로드, 상태 txt/json 기록, 종료코드 흐름 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Raw 02_visualization_app.py`
+  - 목적: Streamlit 업데이트 버튼의 subprocess 실행, 상태 파일 읽기, 캐시 갱신 흐름 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Raw requirements.txt`
+  - 목적: pip 실행 환경 의존성 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Raw environment.yml`
+  - 목적: conda 실행 환경 의존성 및 환경명 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Raw .vscode/settings.json`
+  - 목적: VS Code Python 설정이 특정 사용자 경로에 고정되어 있는지 확인.
+  - 결과: 특정 사용자 절대 경로 고정은 없고 conda 환경 관리자 설정만 있음.
+  - 생성 파일: 없음.
+- `Select-String -Path 03_realtime_data.py -Pattern ...`
+  - 목적: API 키 로드, 실패 종료, 상태 파일 기록, 대상 지역 처리 위치 확인.
+  - 생성 파일: 없음.
+- `Select-String -Path 02_visualization_app.py -Pattern ...`
+  - 목적: 상태 파일 경로, subprocess 인자, 캐시/상태 갱신 코드 위치 확인.
+  - 생성 파일: 없음.
+- `Get-Command python`
+  - 목적: Python 실행 파일 확인.
+  - 결과: Microsoft Store WindowsApps 스텁으로 확인됨.
+  - 생성 파일: 없음.
+- `Get-Command conda`
+  - 목적: conda 실행 가능 여부 확인.
+  - 결과: 현재 PATH에서 `conda` 명령을 찾을 수 없음.
+  - 생성 파일: 없음.
+- `Test-Path .venv\Scripts\python.exe`
+  - 목적: 프로젝트 로컬 가상환경 존재 여부 확인.
+  - 결과: 존재하지 않음.
+  - 생성 파일: 없음.
+- `python --version`
+  - 목적: Python 버전 확인.
+  - 결과: 현재 터미널에서 `python.exe` 실행 실패.
+  - 생성 파일: 없음.
+- `python -m py_compile 02_visualization_app.py 03_realtime_data.py`
+  - 목적: Python 3 문법 검증 시도.
+  - 결과: 현재 터미널의 Python 실행 실패로 검증하지 못함.
+  - 생성 파일: 없음.
+- `Select-String -Path 02_visualization_app.py,03_realtime_data.py -Pattern ...`
+  - 목적: 수정된 프로젝트 기준 경로, 상태 success 필드, subprocess cwd, 실패 종료코드 반영 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 02_visualization_app.py`, `Get-Content -Encoding UTF8 03_realtime_data.py`
+  - 목적: 수정된 경로 처리, subprocess 실패 상태 표시, 최종 상태 json 및 종료코드 처리 코드 확인.
+  - 생성 파일: 없음.
+- 수정 파일
+  - `03_realtime_data.py`
+    - 목적: `.env`와 `data` 경로를 스크립트 위치 기준으로 고정하고, 실시간/중증질환 갱신이 모두 실패한 경우 상태 json/txt 기록 후 종료코드 1 반환.
+    - 생성 파일: 다음 정상 실행 시 `data/last_update_status.json` 갱신 가능.
+  - `02_visualization_app.py`
+    - 목적: 데이터/GeoJSON/상태 파일/수집 스크립트 경로를 프로젝트 기준으로 처리하고, subprocess 실패 시에도 상태 파일 내용을 앱에서 읽어 표시.
+    - 생성 파일: 없음.
+  - `requirements.txt`
+    - 목적: Python 3.12 환경에서 사용할 주요 패키지 최소 버전 명시.
+    - 생성 파일: 없음.
+  - `environment.yml`
+    - 목적: conda 환경명을 `ponggle`로 맞추고 Python 3.12.13 기준 환경으로 정리.
+    - 생성 파일: 없음.
+
+### frontend 보조 웹 실행 흐름 점검
+
+- 사용자 요청
+  - `frontend` 에이전트 보조 역할로 `02_visualization_app.py`의 상태 파일 표시, 실시간 업데이트 실패 표시, 지도 렌더링 제한, import/의존성 문제를 점검하고 필요한 최소 수정만 수행.
+- `Get-Content -Path .\02_visualization_app.py`
+  - 목적: Streamlit/Folium 앱 전체 흐름과 상태 파일 사용 위치 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path .\COMMAND_LOG.md`
+  - 목적: 기존 명령 기록 형식 확인.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Force`
+  - 목적: 프로젝트 루트 파일과 폴더 구성 확인.
+  - 생성 파일: 없음.
+- `git status --short`
+  - 목적: 변경 추적 상태 확인.
+  - 결과: 현재 폴더는 Git 저장소가 아님.
+  - 생성 파일: 없음.
+- `Select-String -Path .\02_visualization_app.py -Pattern ...`
+  - 목적: `UPDATE_STATUS_JSON_PATH`, `UPDATE_STATUS_TEXT_PATH`, 상태 요약, 업데이트 실행, 병원 레이어 제한 코드 위치 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path .\data\last_update_status.json`
+  - 목적: 현재 상태 JSON 구조와 실패 상태 필드 확인.
+  - 결과: `success`, `realtime_update_success`, `severe_update_success`, `notes` 필드 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path .\requirements.txt`, `Get-Content -Path .\.vscode\settings.json`
+  - 목적: Pylance/import 문제와 실제 실행 환경 설정 분리 확인.
+  - 생성 파일: 없음.
+- `python -m py_compile .\02_visualization_app.py`
+  - 목적: Python 문법 검증 시도.
+  - 결과: 현재 터미널의 `python.exe` 실행 실패로 검증하지 못함.
+  - 생성 파일: 없음.
+- `python3 -m py_compile .\02_visualization_app.py`
+  - 목적: 대체 Python 명령으로 문법 검증 시도.
+  - 결과: 현재 터미널의 `python3.exe` 실행 실패로 검증하지 못함.
+  - 생성 파일: 없음.
+- `Get-Command streamlit`, `Get-Command py`, `Get-Command conda`
+  - 목적: Streamlit, Python Launcher, conda 실행 가능 여부 확인.
+  - 결과: 현재 PATH에서 `streamlit`, `py`, `conda`를 찾을 수 없음.
+  - 생성 파일: 없음.
+- 수정 파일
+  - `02_visualization_app.py`
+    - 목적: 상태 JSON 구조 변화에 안전한 요약 함수 추가, txt 상태 파일 읽기 함수로 사용 경로 통일, subprocess 실패 시 JSON/txt/stdout/stderr 정보를 화면에 표시, 병원 마커 제한 판단을 공통 함수로 통일.
+    - 생성 파일: 없음.
+  - `COMMAND_LOG.md`
+    - 목적: 이번 frontend 보조 점검 요청과 주요 명령 기록.
+    - 생성 파일: 없음.
+
+### tester 통합본 검증
+
+- 사용자 요청
+  - `tester` 에이전트 역할로 현재 통합본을 검증하고 보고만 수행. 코드 수정 금지. CSV/GeoJSON/API 실행 및 덮어쓰기 금지.
+- `Get-ChildItem -Force`
+  - 목적: 프로젝트 루트 구성 확인.
+  - 생성 파일: 없음.
+- `rg --files`
+  - 목적: 검증 대상 파일과 데이터/설정 파일 존재 확인.
+  - 생성 파일: 없음.
+- `git status --short`
+  - 목적: 변경 추적 상태 확인.
+  - 결과: 현재 폴더는 Git 저장소가 아님.
+  - 생성 파일: 없음.
+- `rg -n "BASE_DIR|project_path|last_update_status|should_limit_hospital_markers|st_folium|returned_objects|json|txt|error|warning" 02_visualization_app.py`
+  - 목적: 시각화 앱의 경로, 상태 파일, 실패 메시지, 지도 렌더링 옵션 확인.
+  - 생성 파일: 없음.
+- `rg -n "BASE_DIR|DATA_DIR|load_dotenv|dotenv|write_failure_and_exit|success|sys.exit|exit|last_update_status|API|SERVICE|KEY" 03_realtime_data.py`
+  - 목적: 실시간 데이터 수집 스크립트의 경로, `.env` 로드, 실패 종료, 상태 JSON 필드 확인.
+  - 생성 파일: 없음.
+- `Get-Content .vscode/settings.json`, `Get-Content .vscode/tasks.json`, `Get-Content requirements.txt`, `Get-Content environment.yml`
+  - 목적: VS Code 실행 흐름과 의존성 선언 확인.
+  - 생성 파일: 없음.
+- `Get-Command python`, `Get-Command conda`, `Get-Command streamlit`, `python --version`, `conda --version`, `streamlit --version`
+  - 목적: 현재 터미널 PATH의 Python/conda/Streamlit 실행 가능 여부 확인.
+  - 결과: `python`은 WindowsApps 스텁 경로로 확인되나 실행 실패, `conda`와 `streamlit`은 PATH에서 찾을 수 없음.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 ...`, `ConvertFrom-Json`
+  - 목적: PowerShell 기본 출력의 한글 깨짐 여부를 배제하고 UTF-8 기준 실제 파일 내용과 JSON 문법 확인.
+  - 결과: `.vscode/settings.json`, `.vscode/tasks.json` JSON 파싱 성공.
+  - 생성 파일: 없음.
+- `where.exe python`, `where.exe conda`, `where.exe streamlit`
+  - 목적: 실행 파일 PATH 확인.
+  - 결과: 지정 패턴을 찾지 못함.
+  - 생성 파일: 없음.
+- 수정 파일
+  - `COMMAND_LOG.md`
+    - 목적: tester 검증 요청과 주요 명령 기록.
+    - 생성 파일: 없음.
+
+### 업데이트 API 키 로드 실패 해결
+
+- 사용자 요청
+  - 웹 앱 업데이트 후 `업데이트 실패: ER_API_KEY 또는 SERVICE_KEY가 설정되어 있지 않습니다.` 메시지가 표시되는 문제 해결.
+- `Get-Content -Encoding UTF8 .env | ForEach-Object { ... }`
+  - 목적: 민감한 값을 출력하지 않고 `.env`에 있는 키 이름만 확인.
+  - 결과: `ER_API_KEY` 키 존재 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 03_realtime_data.py | Select-Object -First 55`
+  - 목적: `.env` 로드 함수와 기대 키 이름 확인.
+  - 생성 파일: 없음.
+- `Select-String -Path 01_preprocess_er_data.py,03_realtime_data.py -Pattern "SERVICE_KEY|ER_API_KEY|API_KEY|serviceKey|\.env|Decoding|Encoding"`
+  - 목적: API 키 사용 위치와 기존 키 처리 방식 확인.
+  - 생성 파일: 없음.
+- `.env` 값 길이 확인 명령
+  - 목적: 민감한 값을 출력하지 않고 `ER_API_KEY` 값이 비어 있지 않은지 확인.
+  - 결과: 값 길이 88, 값 존재 확인.
+  - 생성 파일: 없음.
+- `Format-Hex -Path .env`
+  - 목적: `.env` 파일 시작 바이트 확인.
+  - 결과: 파일 맨 앞에 UTF-8 BOM(`EF BB BF`)이 있어 Python의 일반 `utf-8` 읽기에서 첫 키 이름이 `ER_API_KEY`로 매칭되지 않을 수 있음을 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 data\last_update_status.json`
+  - 목적: 최근 업데이트 실패 상태 확인.
+  - 결과: API 키 미설정 실패 메시지 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 03_realtime_data.py | Select-Object -Skip 20 -First 28`
+  - 목적: 수정된 `.env` 로드 함수 확인.
+  - 생성 파일: 없음.
+- `Select-String -Path 03_realtime_data.py -Pattern ...`
+  - 목적: 수정 지점 검색 시도.
+  - 결과: PowerShell 패턴 인용 문제로 실패.
+  - 생성 파일: 없음.
+- 수정 파일
+  - `03_realtime_data.py`
+    - 목적: `.env`를 `utf-8-sig`로 읽고 키 이름의 BOM을 제거해 `ER_API_KEY`/`SERVICE_KEY`를 정상 인식하도록 수정.
+    - 생성 파일: 없음.
+
+### Streamlit/Folium UI/UX 개선 범위 기획
+
+- 사용자 요청
+  - `project_manager` 에이전트 역할로만 Streamlit/Folium 기반 응급실 병상 시각화 웹의 UI/UX 디자인 개선 범위를 정하고 `frontend`, `backend`, `tester` 에이전트에게 작업을 할당. 직접 코드 수정 금지.
+- `Get-Content -Path .codex/agents/project_manager.md`
+  - 목적: project_manager 에이전트 역할과 작업 범위 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path PROJECT_CONTEXT.md`
+  - 목적: 프로젝트 목적, 현재 진행 방향, 주요 파일 구조 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path 02_visualization_app.py`
+  - 목적: 현재 Streamlit/Folium 앱의 전체 화면 구성과 데이터 흐름 파악.
+  - 생성 파일: 없음.
+- `Get-Content -Path COMMAND_LOG.md -Tail 80`
+  - 목적: 최근 작업 기록 형식과 이전 변경 이력 확인.
+  - 생성 파일: 없음.
+- `rg -n "st\.set_page_config|st\.title|st\.caption|st\.sidebar|st\.header|st\.selectbox|st\.button|st\.radio|st\.subheader|st\.expander|st\.metric|st\.columns|st_folium|st\.dataframe|st\.markdown|unsafe_allow_html|folium\.Map|CircleMarker|GeoJson|LayerControl" 02_visualization_app.py`
+  - 목적: 주요 UI 컴포넌트, 지도 출력, 커스텀 CSS 사용 여부 확인.
+  - 생성 파일: 없음.
+- `rg -n "make_.*html|popup|tooltip|color_for|fillColor|fillOpacity|radius|tiles|height=760|MAX_HOSPITAL_MARKERS|ZOOM_" 02_visualization_app.py`
+  - 목적: 지도 색상, 라벨, 팝업, 마커, 줌 기준, 지도 높이 등 시각화 요소 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path .codex/agents/frontend.md`, `Get-Content -Path .codex/agents/backend.md`, `Get-Content -Path .codex/agents/tester.md`
+  - 목적: 각 에이전트의 역할과 할당 가능한 작업 범위 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 -Path COMMAND_LOG.md -Tail 60`
+  - 목적: UTF-8 기준 최근 작업 기록 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 -Path 02_visualization_app.py | Select-Object -Skip 960 -First 110`
+  - 목적: 색상 팔레트, 지도 라벨, 지역 팝업 HTML 구성 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 -Path 02_visualization_app.py | Select-Object -Skip 1488 -First 330`
+  - 목적: 실제 화면 구성, 사이드바, 상단 지표, 지도, 하단 테이블 흐름 확인.
+  - 생성 파일: 없음.
+- `Select-String -Path 02_visualization_app.py -Pattern "def make_hospital_popup_html" -Context 0,55`
+  - 목적: 병원 상세 팝업에 표시되는 정보 항목 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 -Path COMMAND_LOG.md -Tail 80`
+  - 목적: 이번 기획 요청과 탐색 명령 기록 반영 여부 확인.
+  - 생성 파일: 없음.
+- `git status --short`
+  - 목적: 변경 추적 상태 확인.
+  - 결과: 현재 폴더가 Git 저장소가 아니라는 메시지 확인.
+  - 생성 파일: 없음.
+- 수정 파일
+  - `COMMAND_LOG.md`
+    - 목적: 이번 기획 요청과 주요 탐색 명령 기록.
+    - 생성 파일: 없음.
+
+### frontend 중심 Streamlit/Folium UI/UX 개선
+
+- 사용자 요청
+  - `frontend` 에이전트 역할로 `02_visualization_app.py` 중심의 Streamlit/Folium 웹 UI/UX를 대학생 포트폴리오용으로 단정하고 실용적으로 개선.
+  - 기존 기능, API, 데이터 구조는 유지하고 backend 파일은 수정하지 않음.
+- `Get-Content -Path 02_visualization_app.py`
+  - 목적: 현재 Streamlit/Folium 앱 전체 구조와 UI 문구, 필터, 지도, 테이블 영역 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path COMMAND_LOG.md`
+  - 목적: 명령 기록 형식과 최근 작업 이력 확인.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Force`
+  - 목적: 프로젝트 루트 파일과 수정 가능 범위 확인.
+  - 생성 파일: 없음.
+- `rg -n "^def |^class |^st\\.|with st\\.sidebar|CATEGORY_GROUPS|make_.*popup|build_.*layer|format_value|condition_mode|selected_labels|st_folium|dataframe|metric|set_page_config" 02_visualization_app.py`
+  - 목적: UI 개선 대상 함수와 화면 구성 위치 검색.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 -Path 02_visualization_app.py | Select-Object ...`
+  - 목적: CSS, 팝업, 사이드바, 지표, 지도 출력, 테이블 구간을 나누어 확인.
+  - 생성 파일: 없음.
+- `rg -n "er-hero|조건 설정|선택 지역 업데이트|er-status-strip|metric_cols|지도 보기|병원 목록 열기|hide_index|page_icon" 02_visualization_app.py`
+  - 목적: UI 개선 코드 반영 위치 확인.
+  - 생성 파일: 없음.
+- `python -m py_compile 02_visualization_app.py`
+  - 목적: Python 문법 검증 시도.
+  - 결과: 현재 환경의 `python.exe` 실행 실패로 검증하지 못함.
+  - 생성 파일: 없음.
+- `Get-Command streamlit`
+  - 목적: Streamlit 실행 가능 여부 확인.
+  - 결과: 현재 PATH에서 `streamlit` 명령을 찾지 못해 로컬 화면 실행 검증은 수행하지 못함.
+  - 생성 파일: 없음.
+- 수정 파일
+  - `02_visualization_app.py`
+    - 목적: 디자인 토큰/CSS를 `apply_design_system()`으로 정리하고, 사이드바 필터/업데이트/카테고리 UX, 메인 헤더/요약 지표/지도 안내/빈 상태/마커 제한 안내/팝업/데이터 테이블 가독성 개선.
+    - 생성 파일: 없음.
+  - `COMMAND_LOG.md`
+    - 목적: 이번 사용자 요청과 주요 명령어, 검증 결과 기록.
+    - 생성 파일: 없음.
+
+### UI/UX 개선 후 메인 Codex 검증
+
+- `Select-String -Path "02_visualization_app.py" -Pattern "def apply_design_system|st.segmented_control|st.container\\(|column_config|hide_index|returned_objects|condition_mode|selected_labels|er-hero|er-stat" -Context 0,3`
+  - 목적: 디자인 시스템 함수, Streamlit 호환성 위험 API, 조건 필터, 지도 반환 객체 제한, 테이블 표시 옵션 반영 여부 확인.
+  - 생성 파일: 없음.
+- `Get-Command python`
+  - 목적: 현재 터미널에서 Python 실행 파일 경로 확인.
+  - 결과: WindowsApps의 `python.exe` 스텁으로 확인되어 프로젝트 가상환경 Python이 잡히지 않음.
+  - 생성 파일: 없음.
+- `Get-Command streamlit`
+  - 목적: 현재 터미널에서 Streamlit 실행 가능 여부 확인.
+  - 결과: `streamlit` 명령을 찾지 못함.
+  - 생성 파일: 없음.
+- `Get-Command conda`
+  - 목적: 현재 터미널에서 conda 실행 가능 여부 확인.
+  - 결과: `conda` 명령을 찾지 못함.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 "02_visualization_app.py" | Select-Object -First 230`
+  - 목적: 상단 설정, `apply_design_system()` CSS, 데이터 경로 설정 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 "02_visualization_app.py" | Select-Object -Skip 1660 -First 220`
+  - 목적: 헤더, 사이드바, 업데이트 버튼, 조건 선택, 상단 지표 화면 구성 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 "02_visualization_app.py" | Select-Object -Skip 1980 -First 170`
+  - 목적: 지도 출력, 마커 제한 안내, 하단 병원 데이터 테이블 구성 확인.
+  - 생성 파일: 없음.
+- `python -m py_compile "02_visualization_app.py"`
+  - 목적: Python 문법 검증 시도.
+  - 결과: 현재 터미널의 `python.exe` 실행 실패로 검증하지 못함.
+  - 생성 파일: 없음.
+- `Select-String -Path '02_visualization_app.py' -Pattern 'st\\.experimental_|st\\.segmented_control|st\\.popover|st\\.dialog|column_config|st\\.toast|horizontal=True|hide_index=True|type="primary"'`
+  - 목적: Streamlit 버전 호환성이 낮을 수 있는 API 사용 여부와 실제 사용 옵션 확인.
+  - 결과: `st.radio(horizontal=True)`, `st.button(type="primary")`, `st.dataframe(hide_index=True)`만 확인됨.
+  - 생성 파일: 없음.
+- 수정 파일
+  - `COMMAND_LOG.md`
+    - 목적: UI/UX 개선 후 검증 명령과 실행 환경 제약 기록.
+    - 생성 파일: 없음.
+## 2026-05-23
+
+### backend_agent UI 표시 조정 영향 검토
+
+- 사용자 요청: 사이드바 줌 범위 안내 제거, 최근 갱신 날짜 표시 개선, 중복 정보 표시 완화 작업에 대해 API, 데이터 모델, 파일 입출력, 서버/수집 로직 변경 필요성과 충돌 가능성만 검토.
+
+### 실행한 명령어
+
+- `rg -n "줌|zoom|최근|갱신|업데이트|update|updated|날짜|date|sidebar|사이드바|중복|병상|응급" .`
+  - 목적: UI 표시 문구와 갱신 시각 관련 코드 위치 확인.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Force`
+  - 목적: 작업공간 파일 구성 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path COMMAND_LOG.md -TotalCount 80`
+  - 목적: 기존 명령 기록 형식 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path 02_visualization_app.py | Select-Object -Skip ... -First ...`
+  - 목적: 갱신 상태 표시, 팝업, 사이드바, 상단 지표 코드 확인.
+  - 생성 파일: 없음.
+- `rg -n "last_update_status|realtime_updated_at|updated_at|run_at|current_latest|latest" 03_realtime_data.py 01_preprocess_er_data.py`
+  - 목적: 수집/전처리 스크립트의 갱신 시각 필드와 상태 파일 생성 로직 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path data\last_update_status.json -TotalCount 80`
+  - 목적: 상태 JSON 구조와 최근 갱신 시각 필드 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path data\last_update_status.txt -TotalCount 80`
+  - 목적: 상태 텍스트 출력 내용 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path 03_realtime_data.py | Select-Object -Skip ... -First ...`
+  - 목적: 상태 파일 쓰기와 최종 메시지 생성 로직 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Path 01_preprocess_er_data.py | Select-Object -Skip ... -First ...`
+  - 목적: `hvidate`에서 `realtime_updated_at`으로 매핑되는 전처리 로직 확인.
+  - 생성 파일: 없음.
+
+### 검토 결과
+
+- API, 데이터 모델, 파일 입출력, 서버/수집 로직 변경은 필요하지 않음.
+- UI 표시 변경은 `02_visualization_app.py`의 렌더링 문구와 표시 방식 조정으로 처리 가능함.
+
+### 사이드바 안내/최근 갱신/중복 지표 UI 수정
+
+- 사용자 요청: 사이드바 카테고리 아래 줌 범위 안내 제거, 최근 갱신 날짜 표시 개선, 중복 정보 표시 완화.
+- `Select-String -Path "02_visualization_app.py" -Pattern "지도 줌|latest_update_text|realtime_updated_at_parsed|ZOOM_SIGUNGU_LEVEL|ZOOM_HOSPITAL_LEVEL|업데이트 상태|format_update_status_summary" -Context 0,4`
+  - 목적: 줌 안내, 최근 갱신 날짜, 업데이트 상태 표시 위치 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 "02_visualization_app.py" | Select-Object -Skip 1800 -First 130`
+  - 목적: 사이드바 자원 조건 영역과 상단 지표 영역 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 "02_visualization_app.py" | Select-Object -Skip 1530 -First 150`
+  - 목적: 지도 줌 전환 로직과 업데이트 메시지 생성 로직 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 "COMMAND_LOG.md" | Select-Object -Last 40`
+  - 목적: 최근 명령 기록 확인.
+  - 생성 파일: 없음.
+- `Select-String -Path "02_visualization_app.py" -Pattern "지도 줌|metric_cols = st.columns|지역 내 병원 수|지역 전체|latest_update_full_text|format_datetime_short|format_datetime_full|현재 조건에 맞는 병원" -Context 0,3`
+  - 목적: 수정 반영 여부 확인.
+  - 생성 파일: 없음.
+- `Select-String -Path "02_visualization_app.py" -Pattern "st\\.experimental_|st\\.segmented_control|st\\.popover|st\\.dialog|column_config|st\\.toast"`
+  - 목적: UI 수정 중 Streamlit 버전 호환성이 낮은 API가 추가되지 않았는지 확인.
+  - 생성 파일: 없음.
+- `python -m py_compile "02_visualization_app.py"`
+  - 목적: Python 문법 검증 시도.
+  - 결과: 현재 터미널의 `python.exe` 실행 실패로 검증하지 못함.
+  - 생성 파일: 없음.
+- `Get-Command streamlit`
+  - 목적: Streamlit 실행 가능 여부 확인.
+  - 결과: 현재 PATH에서 `streamlit` 명령을 찾지 못함.
+  - 생성 파일: 없음.
+- 수정 파일
+  - `02_visualization_app.py`
+    - 목적: 사이드바 줌 범위 안내 제거, 최근 갱신 표시를 짧은 날짜와 전체 날짜 보조 문구로 분리, 상단 중복 병원 수 지표를 보조 문구로 축소.
+    - 생성 파일: 없음.
+  - `COMMAND_LOG.md`
+    - 목적: 이번 UI 표시 수정과 검증 명령 기록.
+    - 생성 파일: 없음.
+
+### 강동구/Gandong 시군구 집계 매칭 문제 수정
+
+- 사용자 요청: 강동구 안에 병원 마커가 있는데 시군구 경계 숫자가 0이고 툴팁이 `서울특별시 Gandong: 병원 0개`로 표시되는 문제를 이전 멀티 에이전트 프로세스로 검토 및 수정.
+- `Select-String -Path "02_visualization_app.py" -Pattern "sigungu_count_df|build_sigungu_layer|feature.properties|SIGUNGU|sigungu_name|tooltip|GeoJsonTooltip|region_name|hospital_count|Gandong|Gangdong" -Context 0,5`
+  - 목적: 시군구 집계와 GeoJSON 지역명 정규화, 툴팁 표시 로직 위치 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 "02_visualization_app.py" | Select-Object -Skip 1320 -First 180`
+  - 목적: 시도/시군구 레이어 생성 로직 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 "02_visualization_app.py" | Select-Object -Skip 1915 -First 70`
+  - 목적: 시군구별 병원 수 집계 로직 확인.
+  - 생성 파일: 없음.
+- `Get-ChildItem -Path data -Force`
+  - 목적: 데이터 파일과 GeoJSON 파일 존재 여부 확인.
+  - 생성 파일: 없음.
+- `Select-String -Path "data\\korea_sigungu.geojson" -Pattern "Gandong|Gangdong|강동" -Context 0,1`
+  - 목적: GeoJSON의 강동구 속성명 확인.
+  - 결과: `NAME_2`가 `Gandong` 오타 영문명으로 들어 있음을 확인.
+  - 생성 파일: 없음.
+- `Import-Csv -Encoding UTF8 "data\\hospital_er_preprocessed_wide.csv" | Where-Object { $_.sido -eq '서울특별시' -and $_.sigungu -eq '강동구' } | Select-Object hospital_name,sido,sigungu,dutyAddr,lat,lon | Format-Table -AutoSize`
+  - 목적: CSV 기준 서울특별시 강동구 병원 데이터 존재 여부 확인.
+  - 결과: 강동구 병원 3개 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Raw -Encoding UTF8 "data\\korea_sigungu.geojson" | ConvertFrom-Json`
+  - 목적: GeoJSON feature 속성을 JSON으로 파싱해 강동구 raw 속성 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 "02_visualization_app.py" | Select-Object -Skip 238 -First 95`
+  - 목적: 기존 시군구 영어 alias 목록 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 "02_visualization_app.py" | Select-Object -Skip 760 -First 190`
+  - 목적: 지역명 추출과 정규화 함수 확인.
+  - 생성 파일: 없음.
+- `Get-Content -Encoding UTF8 "02_visualization_app.py" | Select-Object -Skip 950 -First 190`
+  - 목적: 시군구 alias 후속 목록 확인.
+  - 생성 파일: 없음.
+- `Import-Csv -Encoding UTF8 "data\\hospital_er_preprocessed_wide.csv" | Group-Object sido,sigungu`
+  - 목적: CSV 기준 시도/시군구별 병원 수 집계 확인.
+  - 생성 파일: 없음.
+- PowerShell GeoJSON/CSV 매칭 검토 스크립트
+  - 목적: 정규화 alias 적용 전후로 GeoJSON 시군구와 CSV 시군구 병원 수 매칭 여부 확인.
+  - 결과: 수정 후 `서울특별시 Gandong`이 `서울특별시 강동구`로 정규화되고 병원 3개로 매칭됨.
+  - 생성 파일: 없음.
+- `Select-String -Path "02_visualization_app.py" -Pattern "Gandong|Dong-daemun|Eun-pyeong|Busanjin|Dongnae|Geumjeong|Gwangsan|Ansoeng|CONTEXTUAL_SIGUNGU_ALIASES|sido_name=None|normalize_sigungu_name\\(raw_sigungu" -Context 0,2`
+  - 목적: alias 보강과 정규화 함수 호출부 반영 여부 확인.
+  - 생성 파일: 없음.
+- `python -m py_compile "02_visualization_app.py"`
+  - 목적: Python 문법 검증 시도.
+  - 결과: 현재 터미널의 `python.exe` 실행 실패로 검증하지 못함.
+  - 생성 파일: 없음.
+- `Get-Command streamlit`
+  - 목적: Streamlit 실행 가능 여부 확인.
+  - 결과: 현재 PATH에서 `streamlit` 명령을 찾지 못함.
+  - 생성 파일: 없음.
+- 수정 파일
+  - `02_visualization_app.py`
+    - 목적: GeoJSON 영문/오타 시군구명을 CSV의 한글 시군구명과 같은 키로 정규화하도록 alias 보강, 일부 광역시 공통 구명과 인천 `Nam`의 문맥별 alias 추가.
+    - 생성 파일: 없음.
+  - `COMMAND_LOG.md`
+    - 목적: 이번 강동구/Gandong 문제 검토와 수정 명령 기록.
+    - 생성 파일: 없음.

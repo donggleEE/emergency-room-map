@@ -1,0 +1,51 @@
+# emergency_room_project 기본 설정
+
+[project]
+name = "emergency_room_project"
+description = "전국 병원 및 응급실 병상 가용 여부를 빠르게 확인하기 위한 웹 기반 시각화 프로젝트"
+primary_language = "python"
+documentation_language = "ko"
+
+[workflow]
+command_log = "COMMAND_LOG.md"
+record_commands = true
+markdown_language = "ko"
+preserve_existing_web_app = true
+
+[data]
+data_directory = "data"
+main_dataset = "data/hospital_er_preprocessed_wide.csv"
+hospital_master = "data/hospital_master.csv"
+
+[app]
+main_file = "02_visualization_app.py"
+realtime_update_file = "03_realtime_data.py"
+preprocess_file = "01_preprocess_er_data.py"
+
+[agents.project_manager]
+name = "project_manager"
+path = ".codex/agents/project_manager.md"
+description = "프로젝트 범위, 우선순위, 작업 기록, 산출물 정리를 관리하는 에이전트"
+model = "gpt-5.5"
+reasoning_effort = "xhigh"
+
+[agents.frontend]
+name = "frontend"
+path = ".codex/agents/frontend.md"
+description = "응급실 병상 시각화 화면과 사용자 경험을 설계하고 개선하는 에이전트"
+model = "gpt-5.5"
+reasoning_effort = "medium"
+
+[agents.backend]
+name = "backend"
+path = ".codex/agents/backend.md"
+description = "데이터 수집, 전처리, 파일 입출력, 앱 실행에 필요한 Python 로직을 설계하고 개선하는 에이전트"
+model = "gpt-5.5"
+reasoning_effort = "medium"
+
+[agents.tester]
+name = "tester"
+path = ".codex/agents/tester.md"
+description = "작성되거나 수정된 Python 코드, 데이터 산출물, 웹 시각화 앱 동작을 검증하는 에이전트"
+model = "gpt-5.5"
+reasoning_effort = "medium"

@@ -1,0 +1,170 @@
+﻿column,group,description
+hpid,hospital_master,기관 ID
+old_hpid,hospital_master,구 기관 ID
+hospital_name,hospital_master,병원명
+dutyAddr,hospital_master,주소
+sido,hospital_master,시도
+sigungu,hospital_master,시군구
+emergency_type_code,hospital_master,응급의료기관 분류 코드
+emergency_type_name,hospital_master,응급의료기관 분류명
+tel_main,hospital_master,대표전화
+emergency_tel,hospital_master,응급실 전화
+lat,hospital_master,위도
+lon,hospital_master,경도
+hpid,realtime_beds,원본 컬럼 hpid 기반 실시간 병상/장비/기준병상 정보
+old_hpid,realtime_beds,원본 컬럼 phpid 기반 실시간 병상/장비/기준병상 정보
+realtime_hospital_name,realtime_beds,원본 컬럼 dutyName 기반 실시간 병상/장비/기준병상 정보
+realtime_hospital_name,realtime_beds,원본 컬럼 dutyname 기반 실시간 병상/장비/기준병상 정보
+realtime_emergency_tel,realtime_beds,원본 컬럼 dutyTel3 기반 실시간 병상/장비/기준병상 정보
+realtime_updated_at,realtime_beds,원본 컬럼 hvidate 기반 실시간 병상/장비/기준병상 정보
+avail_er_general_beds,realtime_beds,원본 컬럼 hvec 기반 실시간 병상/장비/기준병상 정보
+avail_operating_rooms,realtime_beds,원본 컬럼 hvoc 기반 실시간 병상/장비/기준병상 정보
+avail_icu_neurology,realtime_beds,원본 컬럼 hvcc 기반 실시간 병상/장비/기준병상 정보
+avail_icu_neonatal,realtime_beds,원본 컬럼 hvncc 기반 실시간 병상/장비/기준병상 정보
+avail_icu_thoracic_surgery,realtime_beds,원본 컬럼 hvccc 기반 실시간 병상/장비/기준병상 정보
+avail_icu_general,realtime_beds,원본 컬럼 hvicc 기반 실시간 병상/장비/기준병상 정보
+avail_inpatient_general_beds,realtime_beds,원본 컬럼 hvgc 기반 실시간 병상/장비/기준병상 정보
+available_ct_yn,realtime_beds,원본 컬럼 hvctayn 기반 실시간 병상/장비/기준병상 정보
+available_mri_yn,realtime_beds,원본 컬럼 hvmriayn 기반 실시간 병상/장비/기준병상 정보
+available_angio_yn,realtime_beds,원본 컬럼 hvangioayn 기반 실시간 병상/장비/기준병상 정보
+available_ventilator_yn,realtime_beds,원본 컬럼 hvventiayn 기반 실시간 병상/장비/기준병상 정보
+available_ventilator_premature_yn,realtime_beds,원본 컬럼 hvventisoayn 기반 실시간 병상/장비/기준병상 정보
+available_incubator_yn,realtime_beds,원본 컬럼 hvincuayn 기반 실시간 병상/장비/기준병상 정보
+available_crrt_yn,realtime_beds,원본 컬럼 hvcrrtayn 기반 실시간 병상/장비/기준병상 정보
+available_ecmo_yn,realtime_beds,원본 컬럼 hvecmoayn 기반 실시간 병상/장비/기준병상 정보
+available_hyperbaric_oxygen_yn,realtime_beds,원본 컬럼 hvoxyayn 기반 실시간 병상/장비/기준병상 정보
+available_targeted_temperature_management_yn,realtime_beds,원본 컬럼 hvhypoayn 기반 실시간 병상/장비/기준병상 정보
+available_ambulance_yn,realtime_beds,원본 컬럼 hvamyn 기반 실시간 병상/장비/기준병상 정보
+er_doctor_direct_phone,realtime_beds,원본 컬럼 hv1 기반 실시간 병상/장비/기준병상 정보
+avail_icu_internal_medicine,realtime_beds,원본 컬럼 hv2 기반 실시간 병상/장비/기준병상 정보
+avail_icu_surgery,realtime_beds,원본 컬럼 hv3 기반 실시간 병상/장비/기준병상 정보
+avail_orthopedic_inpatient_beds,realtime_beds,원본 컬럼 hv4 기반 실시간 병상/장비/기준병상 정보
+ct_status,realtime_beds,원본 컬럼 hv5 기반 실시간 병상/장비/기준병상 정보
+avail_icu_neurosurgery,realtime_beds,원본 컬럼 hv6 기반 실시간 병상/장비/기준병상 정보
+angio_status,realtime_beds,원본 컬럼 hv7 기반 실시간 병상/장비/기준병상 정보
+avail_icu_burn,realtime_beds,원본 컬럼 hv8 기반 실시간 병상/장비/기준병상 정보
+avail_icu_trauma,realtime_beds,원본 컬럼 hv9 기반 실시간 병상/장비/기준병상 정보
+pediatric_ventilator_status,realtime_beds,원본 컬럼 hv10 기반 실시간 병상/장비/기준병상 정보
+incubator_status,realtime_beds,원본 컬럼 hv11 기반 실시간 병상/장비/기준병상 정보
+pediatric_doctor_direct_phone,realtime_beds,원본 컬럼 hv12 기반 실시간 병상/장비/기준병상 정보
+avail_isolation_negative_pressure_area_beds,realtime_beds,원본 컬럼 hv13 기반 실시간 병상/장비/기준병상 정보
+avail_isolation_general_area_beds,realtime_beds,원본 컬럼 hv14 기반 실시간 병상/장비/기준병상 정보
+avail_pediatric_negative_pressure_isolation,realtime_beds,원본 컬럼 hv15 기반 실시간 병상/장비/기준병상 정보
+avail_pediatric_general_isolation,realtime_beds,원본 컬럼 hv16 기반 실시간 병상/장비/기준병상 정보
+avail_er_dedicated_icu_negative_pressure,realtime_beds,원본 컬럼 hv17 기반 실시간 병상/장비/기준병상 정보
+avail_er_dedicated_icu_general_isolation,realtime_beds,원본 컬럼 hv18 기반 실시간 병상/장비/기준병상 정보
+avail_er_dedicated_inpatient_negative_pressure,realtime_beds,원본 컬럼 hv19 기반 실시간 병상/장비/기준병상 정보
+avail_er_dedicated_inpatient_general_isolation,realtime_beds,원본 컬럼 hv21 기반 실시간 병상/장비/기준병상 정보
+avail_infectious_disease_icu_beds,realtime_beds,원본 컬럼 hv22 기반 실시간 병상/장비/기준병상 정보
+avail_infectious_disease_icu_negative_pressure_beds,realtime_beds,원본 컬럼 hv23 기반 실시간 병상/장비/기준병상 정보
+avail_infection_severe_beds,realtime_beds,원본 컬럼 hv24 기반 실시간 병상/장비/기준병상 정보
+avail_infection_semi_severe_beds,realtime_beds,원본 컬럼 hv25 기반 실시간 병상/장비/기준병상 정보
+avail_infection_moderate_beds,realtime_beds,원본 컬럼 hv26 기반 실시간 병상/장비/기준병상 정보
+avail_cohort_isolation,realtime_beds,원본 컬럼 hv27 기반 실시간 병상/장비/기준병상 정보
+avail_pediatric_beds,realtime_beds,원본 컬럼 hv28 기반 실시간 병상/장비/기준병상 정보
+avail_er_negative_pressure_isolation_beds,realtime_beds,원본 컬럼 hv29 기반 실시간 병상/장비/기준병상 정보
+avail_er_general_isolation_beds,realtime_beds,원본 컬럼 hv30 기반 실시간 병상/장비/기준병상 정보
+avail_er_dedicated_icu,realtime_beds,원본 컬럼 hv31 기반 실시간 병상/장비/기준병상 정보
+avail_icu_pediatric,realtime_beds,원본 컬럼 hv32 기반 실시간 병상/장비/기준병상 정보
+avail_er_dedicated_pediatric_icu,realtime_beds,원본 컬럼 hv33 기반 실시간 병상/장비/기준병상 정보
+avail_icu_cardiology,realtime_beds,원본 컬럼 hv34 기반 실시간 병상/장비/기준병상 정보
+avail_icu_negative_pressure_isolation,realtime_beds,원본 컬럼 hv35 기반 실시간 병상/장비/기준병상 정보
+avail_er_dedicated_inpatient_beds,realtime_beds,원본 컬럼 hv36 기반 실시간 병상/장비/기준병상 정보
+avail_er_dedicated_pediatric_inpatient_beds,realtime_beds,원본 컬럼 hv37 기반 실시간 병상/장비/기준병상 정보
+avail_trauma_dedicated_inpatient_beds,realtime_beds,원본 컬럼 hv38 기반 실시간 병상/장비/기준병상 정보
+avail_trauma_dedicated_operating_rooms,realtime_beds,원본 컬럼 hv39 기반 실시간 병상/장비/기준병상 정보
+avail_psychiatric_closed_ward_beds,realtime_beds,원본 컬럼 hv40 기반 실시간 병상/장비/기준병상 정보
+avail_inpatient_negative_pressure_isolation,realtime_beds,원본 컬럼 hv41 기반 실시간 병상/장비/기준병상 정보
+delivery_room_status,realtime_beds,원본 컬럼 hv42 기반 실시간 병상/장비/기준병상 정보
+avail_burn_treatment_room,realtime_beds,원본 컬럼 hv43 기반 실시간 병상/장비/기준병상 정보
+avail_trauma_resuscitation_room,realtime_beds,원본 컬럼 hv60 기반 실시간 병상/장비/기준병상 정보
+avail_trauma_patient_care_area,realtime_beds,원본 컬럼 hv61 기반 실시간 병상/장비/기준병상 정보
+standard_er_general_beds,realtime_beds,원본 컬럼 hvs01 기반 실시간 병상/장비/기준병상 정보
+standard_pediatric_beds,realtime_beds,원본 컬럼 hvs02 기반 실시간 병상/장비/기준병상 정보
+standard_er_negative_pressure_isolation_beds,realtime_beds,원본 컬럼 hvs03 기반 실시간 병상/장비/기준병상 정보
+standard_er_general_isolation_beds,realtime_beds,원본 컬럼 hvs04 기반 실시간 병상/장비/기준병상 정보
+standard_er_dedicated_icu,realtime_beds,원본 컬럼 hvs05 기반 실시간 병상/장비/기준병상 정보
+standard_icu_internal_medicine,realtime_beds,원본 컬럼 hvs06 기반 실시간 병상/장비/기준병상 정보
+standard_icu_surgery,realtime_beds,원본 컬럼 hvs07 기반 실시간 병상/장비/기준병상 정보
+standard_icu_neonatal,realtime_beds,원본 컬럼 hvs08 기반 실시간 병상/장비/기준병상 정보
+standard_icu_pediatric,realtime_beds,원본 컬럼 hvs09 기반 실시간 병상/장비/기준병상 정보
+standard_er_dedicated_pediatric_icu,realtime_beds,원본 컬럼 hvs10 기반 실시간 병상/장비/기준병상 정보
+standard_icu_neurology,realtime_beds,원본 컬럼 hvs11 기반 실시간 병상/장비/기준병상 정보
+standard_icu_neurosurgery,realtime_beds,원본 컬럼 hvs12 기반 실시간 병상/장비/기준병상 정보
+standard_icu_burn,realtime_beds,원본 컬럼 hvs13 기반 실시간 병상/장비/기준병상 정보
+standard_icu_trauma,realtime_beds,원본 컬럼 hvs14 기반 실시간 병상/장비/기준병상 정보
+standard_icu_cardiology,realtime_beds,원본 컬럼 hvs15 기반 실시간 병상/장비/기준병상 정보
+standard_icu_thoracic_surgery,realtime_beds,원본 컬럼 hvs16 기반 실시간 병상/장비/기준병상 정보
+standard_icu_general,realtime_beds,원본 컬럼 hvs17 기반 실시간 병상/장비/기준병상 정보
+standard_icu_negative_pressure_isolation,realtime_beds,원본 컬럼 hvs18 기반 실시간 병상/장비/기준병상 정보
+standard_er_dedicated_inpatient_beds,realtime_beds,원본 컬럼 hvs19 기반 실시간 병상/장비/기준병상 정보
+standard_er_dedicated_pediatric_inpatient_beds,realtime_beds,원본 컬럼 hvs20 기반 실시간 병상/장비/기준병상 정보
+standard_trauma_dedicated_inpatient_beds,realtime_beds,원본 컬럼 hvs21 기반 실시간 병상/장비/기준병상 정보
+standard_operating_rooms,realtime_beds,원본 컬럼 hvs22 기반 실시간 병상/장비/기준병상 정보
+standard_trauma_dedicated_operating_rooms,realtime_beds,원본 컬럼 hvs23 기반 실시간 병상/장비/기준병상 정보
+standard_psychiatric_closed_ward_beds,realtime_beds,원본 컬럼 hvs24 기반 실시간 병상/장비/기준병상 정보
+standard_inpatient_negative_pressure_isolation,realtime_beds,원본 컬럼 hvs25 기반 실시간 병상/장비/기준병상 정보
+standard_delivery_rooms,realtime_beds,원본 컬럼 hvs26 기반 실시간 병상/장비/기준병상 정보
+standard_ct,realtime_beds,원본 컬럼 hvs27 기반 실시간 병상/장비/기준병상 정보
+standard_mri,realtime_beds,원본 컬럼 hvs28 기반 실시간 병상/장비/기준병상 정보
+standard_angio,realtime_beds,원본 컬럼 hvs29 기반 실시간 병상/장비/기준병상 정보
+standard_ventilator_general,realtime_beds,원본 컬럼 hvs30 기반 실시간 병상/장비/기준병상 정보
+standard_ventilator_premature,realtime_beds,원본 컬럼 hvs31 기반 실시간 병상/장비/기준병상 정보
+standard_incubator,realtime_beds,원본 컬럼 hvs32 기반 실시간 병상/장비/기준병상 정보
+standard_crrt,realtime_beds,원본 컬럼 hvs33 기반 실시간 병상/장비/기준병상 정보
+standard_ecmo,realtime_beds,원본 컬럼 hvs34 기반 실시간 병상/장비/기준병상 정보
+standard_targeted_temperature_management,realtime_beds,원본 컬럼 hvs35 기반 실시간 병상/장비/기준병상 정보
+standard_burn_treatment_room,realtime_beds,원본 컬럼 hvs36 기반 실시간 병상/장비/기준병상 정보
+standard_hyperbaric_oxygen,realtime_beds,원본 컬럼 hvs37 기반 실시간 병상/장비/기준병상 정보
+standard_inpatient_general_beds,realtime_beds,원본 컬럼 hvs38 기반 실시간 병상/장비/기준병상 정보
+standard_isolation_negative_pressure_area_beds,realtime_beds,원본 컬럼 hvs46 기반 실시간 병상/장비/기준병상 정보
+standard_isolation_general_area_beds,realtime_beds,원본 컬럼 hvs47 기반 실시간 병상/장비/기준병상 정보
+standard_pediatric_negative_pressure_isolation,realtime_beds,원본 컬럼 hvs48 기반 실시간 병상/장비/기준병상 정보
+standard_pediatric_general_isolation,realtime_beds,원본 컬럼 hvs49 기반 실시간 병상/장비/기준병상 정보
+standard_er_dedicated_icu_negative_pressure,realtime_beds,원본 컬럼 hvs50 기반 실시간 병상/장비/기준병상 정보
+standard_er_dedicated_icu_general_isolation,realtime_beds,원본 컬럼 hvs51 기반 실시간 병상/장비/기준병상 정보
+standard_er_dedicated_inpatient_negative_pressure,realtime_beds,원본 컬럼 hvs52 기반 실시간 병상/장비/기준병상 정보
+standard_er_dedicated_inpatient_general_isolation,realtime_beds,원본 컬럼 hvs53 기반 실시간 병상/장비/기준병상 정보
+standard_infectious_disease_icu_beds,realtime_beds,원본 컬럼 hvs54 기반 실시간 병상/장비/기준병상 정보
+standard_infectious_disease_icu_negative_pressure_beds,realtime_beds,원본 컬럼 hvs55 기반 실시간 병상/장비/기준병상 정보
+standard_infection_severe_beds,realtime_beds,원본 컬럼 hvs56 기반 실시간 병상/장비/기준병상 정보
+standard_infection_semi_severe_beds,realtime_beds,원본 컬럼 hvs57 기반 실시간 병상/장비/기준병상 정보
+standard_infection_moderate_beds,realtime_beds,원본 컬럼 hvs58 기반 실시간 병상/장비/기준병상 정보
+standard_cohort_isolation,realtime_beds,원본 컬럼 hvs59 기반 실시간 병상/장비/기준병상 정보
+standard_trauma_resuscitation_room,realtime_beds,원본 컬럼 hvs60 기반 실시간 병상/장비/기준병상 정보
+standard_trauma_patient_care_area,realtime_beds,원본 컬럼 hvs61 기반 실시간 병상/장비/기준병상 정보
+hpid,severe_disease,원본 컬럼 hpid 기반 중증질환 수용가능정보
+severe_hospital_name,severe_disease,원본 컬럼 dutyName 기반 중증질환 수용가능정보
+severe_er_gatekeeper_yn,severe_disease,원본 컬럼 MKioskTy28 기반 중증질환 수용가능정보
+severe_myocardial_infarction_reperfusion_yn,severe_disease,원본 컬럼 MKioskTy1 기반 중증질환 수용가능정보
+severe_cerebral_infarction_reperfusion_yn,severe_disease,원본 컬럼 MKioskTy2 기반 중증질환 수용가능정보
+severe_subarachnoid_hemorrhage_surgery_yn,severe_disease,원본 컬럼 MKioskTy3 기반 중증질환 수용가능정보
+severe_other_cerebral_hemorrhage_surgery_yn,severe_disease,원본 컬럼 MKioskTy4 기반 중증질환 수용가능정보
+severe_thoracic_aortic_emergency_yn,severe_disease,원본 컬럼 MKioskTy5 기반 중증질환 수용가능정보
+severe_abdominal_aortic_emergency_yn,severe_disease,원본 컬럼 MKioskTy6 기반 중증질환 수용가능정보
+severe_gallbladder_disease_yn,severe_disease,원본 컬럼 MKioskTy7 기반 중증질환 수용가능정보
+severe_biliary_tract_disease_yn,severe_disease,원본 컬럼 MKioskTy8 기반 중증질환 수용가능정보
+severe_nontraumatic_abdominal_emergency_surgery_yn,severe_disease,원본 컬럼 MKioskTy9 기반 중증질환 수용가능정보
+severe_infant_intussusception_obstruction_yn,severe_disease,원본 컬럼 MKioskTy10 기반 중증질환 수용가능정보
+severe_adult_gi_emergency_endoscopy_yn,severe_disease,원본 컬럼 MKioskTy11 기반 중증질환 수용가능정보
+severe_infant_gi_emergency_endoscopy_yn,severe_disease,원본 컬럼 MKioskTy12 기반 중증질환 수용가능정보
+severe_adult_bronchial_emergency_endoscopy_yn,severe_disease,원본 컬럼 MKioskTy13 기반 중증질환 수용가능정보
+severe_infant_bronchial_emergency_endoscopy_yn,severe_disease,원본 컬럼 MKioskTy14 기반 중증질환 수용가능정보
+severe_low_birth_weight_infant_intensive_care_yn,severe_disease,원본 컬럼 MKioskTy15 기반 중증질환 수용가능정보
+severe_obstetric_delivery_yn,severe_disease,원본 컬럼 MKioskTy16 기반 중증질환 수용가능정보
+severe_obstetric_surgery_yn,severe_disease,원본 컬럼 MKioskTy17 기반 중증질환 수용가능정보
+severe_gynecologic_surgery_yn,severe_disease,원본 컬럼 MKioskTy18 기반 중증질환 수용가능정보
+severe_burn_specialized_treatment_yn,severe_disease,원본 컬럼 MKioskTy19 기반 중증질환 수용가능정보
+severe_finger_toe_replantation_yn,severe_disease,원본 컬럼 MKioskTy20 기반 중증질환 수용가능정보
+severe_other_limb_replantation_yn,severe_disease,원본 컬럼 MKioskTy21 기반 중증질환 수용가능정보
+severe_emergency_dialysis_hd_yn,severe_disease,원본 컬럼 MKioskTy22 기반 중증질환 수용가능정보
+severe_emergency_dialysis_crrt_yn,severe_disease,원본 컬럼 MKioskTy23 기반 중증질환 수용가능정보
+severe_psychiatric_emergency_closed_ward_yn,severe_disease,원본 컬럼 MKioskTy24 기반 중증질환 수용가능정보
+severe_ophthalmic_emergency_surgery_yn,severe_disease,원본 컬럼 MKioskTy25 기반 중증질환 수용가능정보
+severe_adult_interventional_radiology_yn,severe_disease,원본 컬럼 MKioskTy26 기반 중증질환 수용가능정보
+severe_infant_interventional_radiology_yn,severe_disease,원본 컬럼 MKioskTy27 기반 중증질환 수용가능정보
+severe_infant_intussusception_obstruction_msg,severe_disease,원본 컬럼 MKioskTy10Msg 기반 중증질환 수용가능정보
+severe_infant_gi_emergency_endoscopy_msg,severe_disease,원본 컬럼 MKioskTy12Msg 기반 중증질환 수용가능정보
+severe_infant_bronchial_emergency_endoscopy_msg,severe_disease,원본 컬럼 MKioskTy14Msg 기반 중증질환 수용가능정보
+severe_low_birth_weight_infant_msg,severe_disease,원본 컬럼 MKioskTy15Msg 기반 중증질환 수용가능정보
+severe_infant_interventional_radiology_msg,severe_disease,원본 컬럼 MKioskTy27Msg 기반 중증질환 수용가능정보

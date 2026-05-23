@@ -1,0 +1,14 @@
+name: ponggle
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12.13
+  - pandas
+  - requests
+  - streamlit
+  - folium
+  - branca
+  - jinja2
+  - pip
+  - pip:
+      - streamlit-folium
