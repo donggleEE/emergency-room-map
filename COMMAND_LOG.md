@@ -1859,3 +1859,11 @@
   - 목적: rebase 후 커밋 순서, 작업트리 상태, `environment.yml` 제외 여부 재확인.
   - 결과: 로컬 `HEAD`는 `56d4649 Restore ER map app features`, 작업트리는 깨끗하며 `environment.yml` 변경 없음.
   - 생성 파일: 없음.
+- `git commit --amend --no-edit`
+  - 목적: rebase/push 관련 명령 기록을 업로드할 커밋에 포함.
+  - 결과: 커밋이 `359dd41 Restore ER map app features`로 갱신됨.
+  - 생성 파일: Git 커밋 갱신.
+- 최종 `git push origin main`
+  - 목적: `environment.yml`을 제외한 변경사항을 GitHub `origin/main`에 업로드.
+  - 결과: 성공. `origin/main`이 `f857d13`에서 `359dd41`로 갱신됨.
+  - 생성 파일: 원격 저장소 갱신.
