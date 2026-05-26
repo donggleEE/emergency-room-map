@@ -30,9 +30,7 @@ SIGUNGU_GEOJSON_PATH = "data/korea_sigungu.geojson"
 
 EXCLUDE_SIDO = ["제주특별자치도"]
 
-# 줌 단계
-ZOOM_SIGUNGU_LEVEL = 9      # 이 이상이면 시군구 도형
-ZOOM_HOSPITAL_LEVEL = 11    # 이 이상이면 병원 핀포인트 표시
+ZOOM_SWITCH_LEVEL = 9
 
 
 # ============================================================
@@ -275,7 +273,7 @@ def format_value_for_user(value):
 
 
 # ============================================================
-# 4. GeoJSON 행정구역 이름 처리
+# 4. 행정구역 GeoJSON 처리
 # ============================================================
 
 def pick_property(props, candidates):
@@ -405,11 +403,12 @@ def normalize_sigungu_name(name, region_type=None):
 
     name = str(name).strip()
 
+    # southkorea-maps 계열 GeoJSON에서 한글명이 깨진 경우
     if "?" in name:
         return None
 
     aliases = {
-        # 서울
+        # 서울특별시
         "Gangseo": "강서구",
         "Geum-cheon": "금천구",
         "Guro": "구로구",
@@ -422,6 +421,7 @@ def normalize_sigungu_name(name, region_type=None):
         "Dongdaemun": "동대문구",
         "Dongjak": "동작구",
         "Eunpyeong": "은평구",
+        "Gangseo-gu": "강서구",
         "Jongno": "종로구",
         "Jung": "중구",
         "Jungnang": "중랑구",
@@ -436,25 +436,19 @@ def normalize_sigungu_name(name, region_type=None):
         "Yeongdeungpo": "영등포구",
         "Yongsan": "용산구",
 
-        # 부산
-        "Haeundae": "해운대구",
-        "Saha": "사하구",
-        "Sasang": "사상구",
-        "Suyeong": "수영구",
-        "Yeonje": "연제구",
-        "Yeongdo": "영도구",
-        "Gijang": "기장군",
-
         # 인천
         "Bupyeong": "부평구",
+        "Dong": "동구",
         "Gyeyang": "계양구",
+        "Jung": "중구",
         "Michuhol": "미추홀구",
         "Namdong": "남동구",
+        "Seo": "서구",
         "Yeonsu": "연수구",
         "Ganghwa": "강화군",
         "Ongjin": "옹진군",
 
-        # 경기
+        # 경기 주요
         "Suwon": "수원시",
         "Seongnam": "성남시",
         "Goyang": "고양시",
@@ -621,6 +615,15 @@ def normalize_sigungu_name(name, region_type=None):
         "Geochang": "거창군",
         "Hapcheon": "합천군",
 
+        # 부산 일부
+        "Haeundae": "해운대구",
+        "Saha": "사하구",
+        "Sasang": "사상구",
+        "Suyeong": "수영구",
+        "Yeonje": "연제구",
+        "Yeongdo": "영도구",
+        "Gijang": "기장군",
+
         # 대구 일부
         "Suseong": "수성구",
         "Dalseo": "달서구",
@@ -631,12 +634,25 @@ def normalize_sigungu_name(name, region_type=None):
         "Daedeok": "대덕구",
     }
 
-    return aliases.get(name, name)
+    if name in aliases:
+        return aliases[name]
+
+    # fallback: 타입이 Gu/County/City로 있으면 뒤에 구/군/시 붙여보기
+    # 단, 영어 이름을 한글로 바꾸는 건 아니므로 실제 매칭률은 낮음.
+    return name
 
 
-# ============================================================
-# 5. GeoJSON 도형 중심 계산
-# ============================================================
+def color_for_index(idx):
+    palette = [
+        "#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3",
+        "#fdb462", "#b3de69", "#fccde5", "#d9d9d9", "#bc80bd",
+        "#ccebc5", "#ffed6f", "#a6cee3", "#b2df8a", "#fb9a99",
+        "#fdbf6f", "#cab2d6", "#ffff99", "#1f78b4", "#33a02c",
+        "#e31a1c", "#ff7f00", "#6a3d9a", "#b15928",
+    ]
+
+    return palette[idx % len(palette)]
+
 
 def iter_coordinates(geometry):
     gtype = geometry.get("type")
@@ -666,49 +682,19 @@ def get_feature_center(feature):
     return sum(lats) / len(lats), sum(lons) / len(lons)
 
 
-# ============================================================
-# 6. 색상 / 라벨
-# ============================================================
-
-def color_for_index(idx):
-    palette = [
-        "#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3",
-        "#fdb462", "#b3de69", "#fccde5", "#bc80bd", "#ccebc5",
-        "#ffed6f", "#a6cee3", "#b2df8a", "#fb9a99", "#fdbf6f",
-        "#cab2d6", "#ffff99", "#1f78b4", "#33a02c", "#ff7f00",
-    ]
-
-    return palette[idx % len(palette)]
-
-
-def color_for_count(count, idx):
-    if count == 0:
-        return "#f7f7f7"
-
-    return color_for_index(idx)
-
-
-def label_color_for_count(count):
-    if count == 0:
-        return "#8b8b8b"
-
-    return "#222222"
-
-
-def add_region_number_label(layer, lat, lon, count, tooltip_text):
+def add_region_label(layer, lat, lon, title, count):
     html = f"""
     <div style="
         font-size: 15px;
         font-weight: 800;
-        color: {label_color_for_count(count)};
-        text-shadow:
-            -1px -1px 0 rgba(255,255,255,0.95),
-             1px -1px 0 rgba(255,255,255,0.95),
-            -1px  1px 0 rgba(255,255,255,0.95),
-             1px  1px 0 rgba(255,255,255,0.95);
+        color: #111827;
+        background: rgba(255,255,255,0.82);
+        border: 1px solid rgba(17,24,39,0.22);
+        border-radius: 999px;
+        padding: 4px 9px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.18);
         white-space: nowrap;
         text-align: center;
-        pointer-events: none;
     ">
         {count}
     </div>
@@ -717,15 +703,15 @@ def add_region_number_label(layer, lat, lon, count, tooltip_text):
     folium.Marker(
         location=[lat, lon],
         icon=DivIcon(
-            icon_size=(30, 20),
-            icon_anchor=(15, 10),
+            icon_size=(60, 24),
+            icon_anchor=(30, 12),
             html=html,
         ),
-        tooltip=tooltip_text
+        tooltip=f"{title}: {count}개 병원"
     ).add_to(layer)
 
 
-def make_region_popup_html(region_name, count, latest_time):
+def make_popup_html(region_name, count, latest_time):
     latest_text = latest_time.strftime("%Y-%m-%d %H:%M") if pd.notna(latest_time) else "-"
 
     return f"""
@@ -736,38 +722,6 @@ def make_region_popup_html(region_name, count, latest_time):
     </div>
     """
 
-
-def make_hospital_popup_html(row):
-    hospital_name = row.get("hospital_name", "-")
-    addr = row.get("dutyAddr", "-")
-    tel_main = row.get("tel_main", "-")
-    emergency_tel = row.get("emergency_tel", "-")
-    updated_at = row.get("realtime_updated_at_parsed", pd.NaT)
-
-    return f"""
-    <div style="width: 310px;">
-        <h4>{hospital_name}</h4>
-
-        <b>주소</b><br>{addr}<br><br>
-
-        <b>대표전화</b>: {tel_main}<br>
-        <b>응급실 전화</b>: {emergency_tel}<br><br>
-
-        <b>응급실 일반 병상</b>: {format_value_for_user(row.get("avail_er_general_beds", None))}<br>
-        <b>수술실</b>: {format_value_for_user(row.get("avail_operating_rooms", None))}<br>
-        <b>일반 중환자실</b>: {format_value_for_user(row.get("avail_icu_general", None))}<br>
-        <b>일반 입원실</b>: {format_value_for_user(row.get("avail_inpatient_general_beds", None))}<br>
-        <b>분만실 가능 여부</b>: {format_value_for_user(row.get("delivery_room_status", None))}<br><br>
-
-        <b>병상정보 갱신시각</b><br>
-        {updated_at.strftime("%Y-%m-%d %H:%M:%S") if pd.notna(updated_at) else "-"}
-    </div>
-    """
-
-
-# ============================================================
-# 7. 시도 / 시군구 레이어 생성
-# ============================================================
 
 def build_sido_layer(sido_geojson, count_df):
     layer = folium.FeatureGroup(name="시도 경계", show=True)
@@ -780,25 +734,10 @@ def build_sido_layer(sido_geojson, count_df):
         for _, row in count_df.iterrows()
     }
 
-    all_sido_names = []
-
-    for feature in sido_geojson.get("features", []):
-        props = feature.get("properties", {})
-        sido_name = normalize_sido_name(get_sido_name_from_props(props))
-
-        if not sido_name:
-            continue
-
-        if sido_name in EXCLUDE_SIDO:
-            continue
-
-        all_sido_names.append(sido_name)
-
-    all_sido_names = sorted(set(all_sido_names))
-
+    sido_names = sorted(count_map.keys())
     color_map = {
         sido: color_for_index(idx)
-        for idx, sido in enumerate(all_sido_names)
+        for idx, sido in enumerate(sido_names)
     }
 
     for feature in sido_geojson.get("features", []):
@@ -811,35 +750,29 @@ def build_sido_layer(sido_geojson, count_df):
         if sido_name in EXCLUDE_SIDO:
             continue
 
-        info = count_map.get(
-            sido_name,
-            {
-                "count": 0,
-                "latest": pd.NaT,
-            }
-        )
+        if sido_name not in count_map:
+            continue
 
-        count = info["count"]
-        latest = info["latest"]
-        color = color_for_count(count, all_sido_names.index(sido_name) if sido_name in all_sido_names else 0)
+        count = count_map[sido_name]["count"]
+        latest = count_map[sido_name]["latest"]
+        color = color_map.get(sido_name, "#cccccc")
 
         gj = folium.GeoJson(
             feature,
-            style_function=lambda x, color=color, count=count: {
+            style_function=lambda x, color=color: {
                 "fillColor": color,
-                "color": "#5f6b7a",
-                "weight": 1.0,
-                "fillOpacity": 0.32 if count > 0 else 0.48,
-                "opacity": 0.75,
+                "color": "#374151",
+                "weight": 1.2,
+                "fillOpacity": 0.68,
             },
             highlight_function=lambda x: {
-                "weight": 2.2,
+                "weight": 3,
                 "color": "#111827",
-                "fillOpacity": 0.48,
+                "fillOpacity": 0.86,
             },
             tooltip=folium.Tooltip(f"{sido_name}: {count:,}개 병원"),
             popup=folium.Popup(
-                make_region_popup_html(sido_name, count, latest),
+                make_popup_html(sido_name, count, latest),
                 max_width=260
             ),
         )
@@ -849,12 +782,12 @@ def build_sido_layer(sido_geojson, count_df):
         center = get_feature_center(feature)
 
         if center:
-            add_region_number_label(
+            add_region_label(
                 layer,
                 center[0],
                 center[1],
-                count,
-                f"{sido_name}: {count:,}개 병원"
+                sido_name,
+                count
             )
 
     return layer
@@ -872,33 +805,10 @@ def build_sigungu_layer(sigungu_geojson, count_df, selected_sido):
             "latest": row["latest_update"],
         }
 
-    region_keys_in_geojson = []
-
-    for feature in sigungu_geojson.get("features", []):
-        props = feature.get("properties", {})
-
-        raw_sido = get_sido_name_from_props(props)
-        raw_sigungu = get_sigungu_name_from_props(props)
-
-        sido_name = normalize_sido_name(raw_sido)
-        sigungu_name = normalize_sigungu_name(raw_sigungu, props.get("TYPE_2"))
-
-        if not sido_name or not sigungu_name:
-            continue
-
-        if sido_name in EXCLUDE_SIDO:
-            continue
-
-        if selected_sido != "전국" and sido_name != selected_sido:
-            continue
-
-        region_keys_in_geojson.append((sido_name, sigungu_name))
-
-    region_keys_in_geojson = sorted(set(region_keys_in_geojson))
-
+    keys = sorted(count_map.keys())
     color_map = {
         key: color_for_index(idx)
-        for idx, key in enumerate(region_keys_in_geojson)
+        for idx, key in enumerate(keys)
     }
 
     for feature in sigungu_geojson.get("features", []):
@@ -908,9 +818,10 @@ def build_sigungu_layer(sigungu_geojson, count_df, selected_sido):
         raw_sigungu = get_sigungu_name_from_props(props)
 
         sido_name = normalize_sido_name(raw_sido)
-        sigungu_name = normalize_sigungu_name(raw_sigungu, props.get("TYPE_2"))
+        region_type = props.get("TYPE_2")
+        sigungu_name = normalize_sigungu_name(raw_sigungu, region_type)
 
-        if not sido_name or not sigungu_name:
+        if not sigungu_name:
             continue
 
         if sido_name in EXCLUDE_SIDO:
@@ -921,40 +832,36 @@ def build_sigungu_layer(sigungu_geojson, count_df, selected_sido):
 
         key = (sido_name, sigungu_name)
 
-        info = count_map.get(
-            key,
-            {
-                "count": 0,
-                "latest": pd.NaT,
-            }
-        )
+        # 일부 시군구 GeoJSON은 시도명이 없고 시군구명만 있는 경우가 있다.
+        # 그 경우에는 선택 시도가 있을 때만 보조 매칭한다.
+        if key not in count_map and selected_sido != "전국":
+            key = (selected_sido, sigungu_name)
 
-        count = info["count"]
-        latest = info["latest"]
-        color = color_for_count(
-            count,
-            region_keys_in_geojson.index(key) if key in region_keys_in_geojson else 0
-        )
+        if key not in count_map:
+            continue
 
-        region_label = f"{sido_name} {sigungu_name}"
+        count = count_map[key]["count"]
+        latest = count_map[key]["latest"]
+        color = color_map.get(key, "#cccccc")
+
+        region_label = f"{key[0]} {key[1]}"
 
         gj = folium.GeoJson(
             feature,
-            style_function=lambda x, color=color, count=count: {
+            style_function=lambda x, color=color: {
                 "fillColor": color,
-                "color": "#5f6b7a",
-                "weight": 0.8,
-                "fillOpacity": 0.24 if count > 0 else 0.42,
-                "opacity": 0.62,
+                "color": "#374151",
+                "weight": 0.9,
+                "fillOpacity": 0.66,
             },
             highlight_function=lambda x: {
-                "weight": 2.0,
+                "weight": 2.6,
                 "color": "#111827",
-                "fillOpacity": 0.42,
+                "fillOpacity": 0.86,
             },
             tooltip=folium.Tooltip(f"{region_label}: {count:,}개 병원"),
             popup=folium.Popup(
-                make_region_popup_html(region_label, count, latest),
+                make_popup_html(region_label, count, latest),
                 max_width=280
             ),
         )
@@ -964,100 +871,54 @@ def build_sigungu_layer(sigungu_geojson, count_df, selected_sido):
         center = get_feature_center(feature)
 
         if center:
-            add_region_number_label(
+            add_region_label(
                 layer,
                 center[0],
                 center[1],
-                count,
-                f"{region_label}: {count:,}개 병원"
+                region_label,
+                count
             )
 
     return layer
 
 
-def build_hospital_layer(filtered_df):
-    layer = folium.FeatureGroup(name="병원 위치", show=False)
-
-    for _, row in filtered_df.iterrows():
-        if pd.isna(row.get("lat")) or pd.isna(row.get("lon")):
-            continue
-
-        hospital_name = row.get("hospital_name", "-")
-
-        folium.CircleMarker(
-            location=[row["lat"], row["lon"]],
-            radius=5,
-            color="#111827",
-            weight=1.6,
-            fill=True,
-            fill_color="#ef4444",
-            fill_opacity=0.9,
-            opacity=0.95,
-            tooltip=hospital_name,
-            popup=folium.Popup(
-                make_hospital_popup_html(row),
-                max_width=350
-            ),
-        ).add_to(layer)
-
-    return layer
-
-
-# ============================================================
-# 8. 줌 레벨에 따른 레이어 자동 전환
-# ============================================================
-
 class ZoomLayerSwitcher(MacroElement):
-    def __init__(self, sido_layer, sigungu_layer, hospital_layer, sigungu_threshold, hospital_threshold):
+    """
+    줌 레벨에 따라 시도 경계와 시군구 경계를 자동 전환한다.
+    """
+
+    def __init__(self, sido_layer, sigungu_layer, threshold):
         super().__init__()
         self._name = "ZoomLayerSwitcher"
-
         self.sido_layer = sido_layer.get_name()
         self.sigungu_layer = sigungu_layer.get_name()
-        self.hospital_layer = hospital_layer.get_name()
-
-        self.sigungu_threshold = sigungu_threshold
-        self.hospital_threshold = hospital_threshold
+        self.threshold = threshold
 
         self._template = Template(
             """
             {% macro script(this, kwargs) %}
             var map = {{this._parent.get_name()}};
-
             var sidoLayer = {{this.sido_layer}};
             var sigunguLayer = {{this.sigungu_layer}};
-            var hospitalLayer = {{this.hospital_layer}};
-
-            var sigunguThreshold = {{this.sigungu_threshold}};
-            var hospitalThreshold = {{this.hospital_threshold}};
-
-            function setLayerVisible(layer, visible) {
-                if (visible) {
-                    if (!map.hasLayer(layer)) {
-                        map.addLayer(layer);
-                    }
-                } else {
-                    if (map.hasLayer(layer)) {
-                        map.removeLayer(layer);
-                    }
-                }
-            }
+            var threshold = {{this.threshold}};
 
             function switchBoundaryByZoom() {
                 var z = map.getZoom();
 
-                if (z < sigunguThreshold) {
-                    setLayerVisible(sidoLayer, true);
-                    setLayerVisible(sigunguLayer, false);
-                    setLayerVisible(hospitalLayer, false);
-                } else if (z >= sigunguThreshold && z < hospitalThreshold) {
-                    setLayerVisible(sidoLayer, false);
-                    setLayerVisible(sigunguLayer, true);
-                    setLayerVisible(hospitalLayer, false);
+                if (z >= threshold) {
+                    if (map.hasLayer(sidoLayer)) {
+                        map.removeLayer(sidoLayer);
+                    }
+                    if (!map.hasLayer(sigunguLayer)) {
+                        map.addLayer(sigunguLayer);
+                    }
                 } else {
-                    setLayerVisible(sidoLayer, false);
-                    setLayerVisible(sigunguLayer, true);
-                    setLayerVisible(hospitalLayer, true);
+                    if (map.hasLayer(sigunguLayer)) {
+                        map.removeLayer(sigunguLayer);
+                    }
+                    if (!map.hasLayer(sidoLayer)) {
+                        map.addLayer(sidoLayer);
+                    }
                 }
             }
 
@@ -1069,7 +930,7 @@ class ZoomLayerSwitcher(MacroElement):
 
 
 # ============================================================
-# 9. 실시간 업데이트 함수
+# 5. 실시간 업데이트 함수
 # ============================================================
 
 def run_realtime_update(update_sido, update_sigungu):
@@ -1143,11 +1004,11 @@ def run_realtime_update(update_sido, update_sigungu):
 
 
 # ============================================================
-# 10. 화면 구성
+# 6. 화면 구성
 # ============================================================
 
 st.title("실시간 응급실 가용병상 지도")
-st.caption("행정구역 경계와 병원 위치를 함께 활용한 응급의료기관 가용자원 지도")
+st.caption("행정구역 경계 기반으로 응급의료기관 가용자원 분포를 확인하는 지도")
 
 if not os.path.exists(DATA_PATH):
     st.error(f"{DATA_PATH} 파일이 없습니다. 먼저 전처리 코드를 실행하세요.")
@@ -1155,10 +1016,12 @@ if not os.path.exists(DATA_PATH):
 
 if not os.path.exists(SIDO_GEOJSON_PATH):
     st.error(f"{SIDO_GEOJSON_PATH} 파일이 없습니다.")
+    st.info("시도 경계 GeoJSON 파일을 data/korea_sido.geojson 위치에 넣어주세요.")
     st.stop()
 
 if not os.path.exists(SIGUNGU_GEOJSON_PATH):
     st.error(f"{SIGUNGU_GEOJSON_PATH} 파일이 없습니다.")
+    st.info("시군구 경계 GeoJSON 파일을 data/korea_sigungu.geojson 위치에 넣어주세요.")
     st.stop()
 
 df = load_data(DATA_PATH)
@@ -1173,7 +1036,7 @@ sigungu_geojson = load_geojson(SIGUNGU_GEOJSON_PATH)
 
 
 # ============================================================
-# 11. 사이드바
+# 7. 사이드바
 # ============================================================
 
 with st.sidebar:
@@ -1247,12 +1110,17 @@ with st.sidebar:
 
     st.divider()
 
-    st.caption(f"줌 {ZOOM_SIGUNGU_LEVEL} 이상: 시군구 경계")
-    st.caption(f"줌 {ZOOM_HOSPITAL_LEVEL} 이상: 병원 위치 표시")
+    show_hospital_points = st.checkbox(
+        "병원 위치 점 함께 보기",
+        value=False,
+        help="기본 지도는 행정구역 단위입니다. 정확한 병원 위치가 필요할 때만 켜세요."
+    )
+
+    st.caption(f"줌 레벨 {ZOOM_SWITCH_LEVEL} 이상부터 시군구 경계로 자동 전환됩니다.")
 
 
 # ============================================================
-# 12. 지역 필터 + 카테고리 필터
+# 8. 지역 필터 + 카테고리 필터
 # ============================================================
 
 region_filtered = df.copy()
@@ -1267,7 +1135,7 @@ filtered = filter_by_categories(region_filtered, selected_labels, condition_mode
 
 
 # ============================================================
-# 13. 상단 지표
+# 9. 상단 지표 단순화
 # ============================================================
 
 left, right = st.columns(2)
@@ -1288,7 +1156,7 @@ with right:
 
 
 # ============================================================
-# 14. 행정구역별 집계
+# 10. 행정구역별 집계
 # ============================================================
 
 sido_count_df = (
@@ -1311,9 +1179,12 @@ sigungu_count_df = (
     .reset_index()
 )
 
+sido_count_df = sido_count_df[sido_count_df["hospital_count"] > 0].copy()
+sigungu_count_df = sigungu_count_df[sigungu_count_df["hospital_count"] > 0].copy()
+
 
 # ============================================================
-# 15. 지도 중심 설정
+# 11. 지도 중심 설정
 # ============================================================
 
 if len(filtered) > 0:
@@ -1332,7 +1203,7 @@ else:
 
 
 # ============================================================
-# 16. 지도 생성
+# 12. 지도 생성
 # ============================================================
 
 m = folium.Map(
@@ -1353,27 +1224,64 @@ sigungu_layer = build_sigungu_layer(
     selected_sido=selected_sido,
 )
 
-hospital_layer = build_hospital_layer(filtered)
-
 sido_layer.add_to(m)
 sigungu_layer.add_to(m)
-hospital_layer.add_to(m)
 
 m.add_child(
     ZoomLayerSwitcher(
         sido_layer=sido_layer,
         sigungu_layer=sigungu_layer,
-        hospital_layer=hospital_layer,
-        sigungu_threshold=ZOOM_SIGUNGU_LEVEL,
-        hospital_threshold=ZOOM_HOSPITAL_LEVEL,
+        threshold=ZOOM_SWITCH_LEVEL,
     )
 )
+
+
+# ============================================================
+# 13. 선택 옵션: 병원 위치 점
+# ============================================================
+
+if show_hospital_points:
+    hospital_layer = folium.FeatureGroup(name="병원 위치", show=True)
+
+    for _, row in filtered.iterrows():
+        hospital_name = row.get("hospital_name", "-")
+        addr = row.get("dutyAddr", "-")
+        emergency_tel = row.get("emergency_tel", "-")
+        updated_at = row.get("realtime_updated_at_parsed", pd.NaT)
+
+        popup_html = f"""
+        <div style="width: 300px;">
+            <h4>{hospital_name}</h4>
+            <b>주소</b><br>{addr}<br><br>
+            <b>응급실 전화</b>: {emergency_tel}<br>
+            <b>응급실 일반 병상</b>: {format_value_for_user(row.get("avail_er_general_beds", None))}<br>
+            <b>수술실</b>: {format_value_for_user(row.get("avail_operating_rooms", None))}<br>
+            <b>일반 중환자실</b>: {format_value_for_user(row.get("avail_icu_general", None))}<br>
+            <b>일반 입원실</b>: {format_value_for_user(row.get("avail_inpatient_general_beds", None))}<br><br>
+            <b>병상정보 갱신시각</b><br>
+            {updated_at.strftime("%Y-%m-%d %H:%M:%S") if pd.notna(updated_at) else "-"}
+        </div>
+        """
+
+        folium.CircleMarker(
+            location=[row["lat"], row["lon"]],
+            radius=4,
+            color="#111827",
+            fill=True,
+            fill_color="#111827",
+            fill_opacity=0.75,
+            opacity=0.9,
+            tooltip=hospital_name,
+            popup=folium.Popup(popup_html, max_width=340),
+        ).add_to(hospital_layer)
+
+    hospital_layer.add_to(m)
 
 folium.LayerControl(collapsed=True).add_to(m)
 
 
 # ============================================================
-# 17. 지도 출력
+# 14. 지도 출력
 # ============================================================
 
 st_folium(
@@ -1386,7 +1294,7 @@ st_folium(
 
 
 # ============================================================
-# 18. 하단 데이터 테이블
+# 15. 하단 데이터 테이블
 # ============================================================
 
 with st.expander("현재 지도에 반영된 병원 데이터 보기", expanded=False):

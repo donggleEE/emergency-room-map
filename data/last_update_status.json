@@ -1,16 +1,16 @@
 {
-  "target": "전국 전체",
-  "run_at": "2026-05-23 19:35:48",
+  "target": "경기도 전체",
+  "run_at": "2026-05-24 12:27:41",
   "success": true,
   "realtime_update_success": true,
-  "realtime_updated_count": 418,
+  "realtime_updated_count": 74,
   "severe_update_success": true,
-  "severe_updated_count": 416,
+  "severe_updated_count": 74,
   "api_quota_exceeded": false,
-  "latest_realtime_source_updated_at_from_this_run": "20260523193556",
-  "current_latest_realtime_source_updated_at": "20260523193556",
+  "latest_realtime_source_updated_at_from_this_run": "20260524122644",
+  "current_latest_realtime_source_updated_at": "20260524122644",
   "notes": [
-    "실시간 병상 데이터 갱신 완료: 전국 전체 / 갱신 병원 수: 418",
-    "중증질환 데이터 갱신 완료: 전국 전체 / 갱신 병원 수: 416"
+    "실시간 병상 데이터 갱신 완료: 경기도 전체 / 갱신 병원 수: 74",
+    "중증질환 데이터 갱신 완료: 경기도 전체 / 갱신 병원 수: 74"
   ]
 }

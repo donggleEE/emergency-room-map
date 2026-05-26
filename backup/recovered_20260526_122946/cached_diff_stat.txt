@@ -1,0 +1,12 @@
+﻿ .vscode/settings.json                  |   4 +-
+ 02_visualization_app copy 3.py         | 966 +++++----------------------------
+ 02_visualization_app.py                | 966 +++++----------------------------
+ COMMAND_LOG.md                         | 545 +++++++++++++++++++
+ data/hospital_er_preprocessed_wide.csv | 836 ++++++++++++++--------------
+ data/last_update_status.json           |  16 +-
+ data/last_update_status.txt            |  10 +-
+ data/realtime_beds_raw_latest.csv      | 508 +++--------------
+ data/realtime_beds_wide.csv            | 836 ++++++++++++++--------------
+ data/severe_disease_raw_latest.csv     | 398 +-------------
+ data/severe_disease_wide.csv           | 832 ++++++++++++++--------------
+ 11 files changed, 2158 insertions(+), 3759 deletions(-)

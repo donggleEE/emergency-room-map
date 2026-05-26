@@ -234,12 +234,6 @@ ZOOM_HOSPITAL_LEVEL = 11    # 이 이상이면 병원 핀포인트 표시
 NATIONWIDE_VALUE = "전국"
 ALL_SIGUNGU_VALUE = "전체"
 MAX_HOSPITAL_MARKERS = 450
-SIDO_FILTER_KEY = "selected_sidos"
-SIGUNGU_FILTER_KEY = "selected_region_pairs"
-GPS_FILTER_NOTICE_KEY = "gps_filter_notice"
-GPS_LOCATION_KEY = "gps_location"
-PENDING_GPS_FILTER_KEY = "pending_gps_filter"
-GPS_LAST_EVENT_KEY = "gps_last_event_timestamp"
 
 ENGLISH_SIDO_ALIASES = {
     "Seoul": "서울특별시",
@@ -481,39 +475,6 @@ CATEGORY_TO_COLUMNS = {
     for label, cols in group.items()
 }
 
-APP_BASE_COLUMNS = {
-    "hpid",
-    "hospital_name",
-    "sido",
-    "sigungu",
-    "dutyAddr",
-    "tel_main",
-    "emergency_tel",
-    "lat",
-    "lon",
-    "realtime_updated_at",
-    "collected_at",
-}
-
-APP_TABLE_COLUMNS = {
-    "avail_er_general_beds",
-    "avail_operating_rooms",
-    "avail_icu_general",
-    "avail_inpatient_general_beds",
-    "delivery_room_status",
-    "standard_delivery_rooms",
-}
-
-APP_REQUIRED_COLUMNS = sorted(
-    APP_BASE_COLUMNS
-    | APP_TABLE_COLUMNS
-    | {
-        col
-        for cols in CATEGORY_TO_COLUMNS.values()
-        for col in ([cols] if isinstance(cols, str) else cols)
-    }
-)
-
 
 # ============================================================
 # 2. 데이터 로드
@@ -524,7 +485,6 @@ def load_data(path, refresh_token=0):
     df = pd.read_csv(
         path,
         encoding="utf-8-sig",
-        usecols=lambda col: col in APP_REQUIRED_COLUMNS,
         dtype={
             "hpid": str,
             "realtime_updated_at": str,
@@ -535,9 +495,6 @@ def load_data(path, refresh_token=0):
     df["lat"] = pd.to_numeric(df["lat"], errors="coerce")
     df["lon"] = pd.to_numeric(df["lon"], errors="coerce")
     df = df.dropna(subset=["lat", "lon"])
-    df = df[~df["sido"].isin(EXCLUDE_SIDO)].copy()
-    df["realtime_updated_at_parsed"] = df["realtime_updated_at"].apply(parse_datetime_yyyymmddhhmmss)
-    df["collected_at_parsed"] = pd.to_datetime(df["collected_at"], errors="coerce")
 
     return df
 
@@ -700,6 +657,16 @@ def load_update_status_text(path=UPDATE_STATUS_TEXT_PATH):
         return None
 
     return status_text or None
+
+
+def should_limit_hospital_markers(filtered_df, selected_sido, selected_sigungu):
+    return (
+        len(filtered_df) > MAX_HOSPITAL_MARKERS
+        and (
+            selected_sido == NATIONWIDE_VALUE
+            or selected_sigungu == ALL_SIGUNGU_VALUE
+        )
+    )
 
 
 # ============================================================
@@ -1236,123 +1203,6 @@ def get_feature_center(feature):
     return sum(lats) / len(lats), sum(lons) / len(lons)
 
 
-@st.cache_data(show_spinner=False)
-def get_sido_feature_items(path, mtime):
-    geojson = load_geojson(path)
-    items = []
-
-    for feature in geojson.get("features", []):
-        props = feature.get("properties", {})
-        sido_name = normalize_sido_name(get_sido_name_from_props(props))
-
-        if not sido_name or sido_name in EXCLUDE_SIDO:
-            continue
-
-        items.append(
-            {
-                "sido": sido_name,
-                "feature": feature,
-                "center": get_feature_center(feature),
-            }
-        )
-
-    return items
-
-
-@st.cache_data(show_spinner=False)
-def get_sigungu_feature_items(path, mtime):
-    geojson = load_geojson(path)
-    items = []
-
-    for feature in geojson.get("features", []):
-        props = feature.get("properties", {})
-
-        raw_sido = get_sido_name_from_props(props)
-        raw_sigungu = get_sigungu_name_from_props(props)
-
-        sido_name = normalize_sido_name(raw_sido)
-        sigungu_name = normalize_sigungu_name(raw_sigungu, props.get("TYPE_2"), sido_name)
-
-        if not sido_name or not sigungu_name or sido_name in EXCLUDE_SIDO:
-            continue
-
-        items.append(
-            {
-                "sido": sido_name,
-                "sigungu": sigungu_name,
-                "feature": feature,
-                "center": get_feature_center(feature),
-            }
-        )
-
-    return items
-
-
-def point_in_ring(lon, lat, ring):
-    inside = False
-    j = len(ring) - 1
-
-    for i, current in enumerate(ring):
-        previous = ring[j]
-        xi, yi = current[0], current[1]
-        xj, yj = previous[0], previous[1]
-        intersects = ((yi > lat) != (yj > lat)) and (
-            lon < (xj - xi) * (lat - yi) / ((yj - yi) or 1e-12) + xi
-        )
-
-        if intersects:
-            inside = not inside
-
-        j = i
-
-    return inside
-
-
-def point_in_feature(lon, lat, feature):
-    geometry = feature.get("geometry", {})
-    gtype = geometry.get("type")
-    coords = geometry.get("coordinates", [])
-
-    if gtype == "Polygon":
-        return bool(coords) and point_in_ring(lon, lat, coords[0])
-
-    if gtype == "MultiPolygon":
-        return any(polygon and point_in_ring(lon, lat, polygon[0]) for polygon in coords)
-
-    return False
-
-
-@st.cache_data(show_spinner=False)
-def build_location_region_lookup(path, mtime):
-    items = get_sigungu_feature_items(path, mtime)
-    lookup = []
-
-    for item in items:
-        feature = item["feature"]
-        geometry = feature.get("geometry", {})
-
-        if geometry.get("type") not in ["Polygon", "MultiPolygon"]:
-            continue
-
-        lookup.append(
-            {
-                "sido": item["sido"],
-                "sigungu": item["sigungu"],
-                "geometry": geometry,
-            }
-        )
-
-    return lookup
-
-
-def find_region_for_location(lat, lon, lookup):
-    for item in lookup:
-        if point_in_feature(lon, lat, {"geometry": item["geometry"]}):
-            return item["sido"], item["sigungu"]
-
-    return None, None
-
-
 # ============================================================
 # 6. 색상 / 라벨
 # ============================================================
@@ -1382,7 +1232,7 @@ def label_color_for_count(count):
     return "#0f172a"
 
 
-def add_region_number_label(layer, lat, lon, count, tooltip_text=None):
+def add_region_number_label(layer, lat, lon, count, tooltip_text):
     html = f"""
     <div style="
         font-size: 15px;
@@ -1408,6 +1258,7 @@ def add_region_number_label(layer, lat, lon, count, tooltip_text=None):
             icon_anchor=(15, 10),
             html=html,
         ),
+        tooltip=tooltip_text
     ).add_to(layer)
 
 
@@ -1468,7 +1319,7 @@ def make_hospital_popup_html(row):
 # 7. 시도 / 시군구 레이어 생성
 # ============================================================
 
-def build_sido_layer(sido_feature_items, count_df):
+def build_sido_layer(sido_geojson, count_df):
     layer = folium.FeatureGroup(name="시도 경계", show=True)
 
     count_map = {
@@ -1479,16 +1330,36 @@ def build_sido_layer(sido_feature_items, count_df):
         for _, row in count_df.iterrows()
     }
 
-    all_sido_names = sorted({item["sido"] for item in sido_feature_items})
+    all_sido_names = []
+
+    for feature in sido_geojson.get("features", []):
+        props = feature.get("properties", {})
+        sido_name = normalize_sido_name(get_sido_name_from_props(props))
+
+        if not sido_name:
+            continue
+
+        if sido_name in EXCLUDE_SIDO:
+            continue
+
+        all_sido_names.append(sido_name)
+
+    all_sido_names = sorted(set(all_sido_names))
 
     color_map = {
         sido: color_for_index(idx)
         for idx, sido in enumerate(all_sido_names)
     }
 
-    for item in sido_feature_items:
-        feature = item["feature"]
-        sido_name = item["sido"]
+    for feature in sido_geojson.get("features", []):
+        props = feature.get("properties", {})
+        sido_name = normalize_sido_name(get_sido_name_from_props(props))
+
+        if not sido_name:
+            continue
+
+        if sido_name in EXCLUDE_SIDO:
+            continue
 
         info = count_map.get(
             sido_name,
@@ -1516,6 +1387,7 @@ def build_sido_layer(sido_feature_items, count_df):
                 "color": "#0f172a",
                 "fillOpacity": 0.44,
             },
+            tooltip=folium.Tooltip(f"{sido_name}: {count:,}개 병원"),
             popup=folium.Popup(
                 make_region_popup_html(sido_name, count, latest),
                 max_width=260
@@ -1524,7 +1396,7 @@ def build_sido_layer(sido_feature_items, count_df):
 
         gj.add_to(layer)
 
-        center = item["center"]
+        center = get_feature_center(feature)
 
         if center:
             add_region_number_label(
@@ -1532,15 +1404,16 @@ def build_sido_layer(sido_feature_items, count_df):
                 center[0],
                 center[1],
                 count,
+                f"{sido_name}: {count:,}개 병원"
             )
 
     return layer
 
 
-def build_sigungu_layer(sigungu_feature_items, count_df, selected_sidos, selected_region_pairs):
+def build_sigungu_layer(sigungu_geojson, count_df, selected_sido):
     layer = folium.FeatureGroup(name="시군구 경계", show=False)
 
-    if not selected_sidos:
+    if selected_sido == NATIONWIDE_VALUE:
         return layer
 
     count_map = {}
@@ -1552,33 +1425,53 @@ def build_sigungu_layer(sigungu_feature_items, count_df, selected_sidos, selecte
             "latest": row["latest_update"],
         }
 
-    selected_sido_set = set(selected_sidos)
-    selected_pair_set = set(selected_region_pairs)
-    limit_to_pairs = bool(selected_pair_set)
-    filtered_items = []
+    region_keys_in_geojson = []
 
-    for item in sigungu_feature_items:
-        key = (item["sido"], item["sigungu"])
+    for feature in sigungu_geojson.get("features", []):
+        props = feature.get("properties", {})
 
-        if item["sido"] not in selected_sido_set:
+        raw_sido = get_sido_name_from_props(props)
+        raw_sigungu = get_sigungu_name_from_props(props)
+
+        sido_name = normalize_sido_name(raw_sido)
+        sigungu_name = normalize_sigungu_name(raw_sigungu, props.get("TYPE_2"), sido_name)
+
+        if not sido_name or not sigungu_name:
             continue
 
-        if limit_to_pairs and key not in selected_pair_set:
+        if sido_name in EXCLUDE_SIDO:
             continue
 
-        filtered_items.append(item)
+        if selected_sido != NATIONWIDE_VALUE and sido_name != selected_sido:
+            continue
 
-    region_keys_in_geojson = sorted({(item["sido"], item["sigungu"]) for item in filtered_items})
+        region_keys_in_geojson.append((sido_name, sigungu_name))
+
+    region_keys_in_geojson = sorted(set(region_keys_in_geojson))
 
     color_map = {
         key: color_for_index(idx)
         for idx, key in enumerate(region_keys_in_geojson)
     }
 
-    for item in filtered_items:
-        feature = item["feature"]
-        sido_name = item["sido"]
-        sigungu_name = item["sigungu"]
+    for feature in sigungu_geojson.get("features", []):
+        props = feature.get("properties", {})
+
+        raw_sido = get_sido_name_from_props(props)
+        raw_sigungu = get_sigungu_name_from_props(props)
+
+        sido_name = normalize_sido_name(raw_sido)
+        sigungu_name = normalize_sigungu_name(raw_sigungu, props.get("TYPE_2"), sido_name)
+
+        if not sido_name or not sigungu_name:
+            continue
+
+        if sido_name in EXCLUDE_SIDO:
+            continue
+
+        if selected_sido != NATIONWIDE_VALUE and sido_name != selected_sido:
+            continue
+
         key = (sido_name, sigungu_name)
 
         info = count_map.get(
@@ -1612,6 +1505,7 @@ def build_sigungu_layer(sigungu_feature_items, count_df, selected_sidos, selecte
                 "color": "#0f172a",
                 "fillOpacity": 0.4,
             },
+            tooltip=folium.Tooltip(f"{region_label}: {count:,}개 병원"),
             popup=folium.Popup(
                 make_region_popup_html(region_label, count, latest),
                 max_width=280
@@ -1620,7 +1514,7 @@ def build_sigungu_layer(sigungu_feature_items, count_df, selected_sidos, selecte
 
         gj.add_to(layer)
 
-        center = item["center"]
+        center = get_feature_center(feature)
 
         if center:
             add_region_number_label(
@@ -1628,26 +1522,16 @@ def build_sigungu_layer(sigungu_feature_items, count_df, selected_sidos, selecte
                 center[0],
                 center[1],
                 count,
+                f"{region_label}: {count:,}개 병원"
             )
 
     return layer
 
 
-def should_limit_hospital_markers_for_scope(filtered_df, selected_sidos, selected_region_pairs):
-    return (
-        len(filtered_df) > MAX_HOSPITAL_MARKERS
-        and (
-            not selected_sidos
-            or len(selected_sidos) > 1
-            or not selected_region_pairs
-        )
-    )
-
-
-def build_hospital_layer(filtered_df, selected_sidos, selected_region_pairs):
+def build_hospital_layer(filtered_df, selected_sido, selected_sigungu):
     layer = folium.FeatureGroup(name="병원 위치", show=False)
 
-    if should_limit_hospital_markers_for_scope(filtered_df, selected_sidos, selected_region_pairs):
+    if should_limit_hospital_markers(filtered_df, selected_sido, selected_sigungu):
         return layer
 
     for _, row in filtered_df.iterrows():
@@ -1666,8 +1550,6 @@ def build_hospital_layer(filtered_df, selected_sidos, selected_region_pairs):
             fill_opacity=0.92,
             opacity=0.95,
             tooltip=hospital_name,
-            pane="hospitalMarkerPane",
-            bubbling_mouse_events=False,
             popup=folium.Popup(
                 make_hospital_popup_html(row),
                 max_width=350
@@ -1754,208 +1636,6 @@ class ZoomLayerSwitcher(MacroElement):
 
             map.on('zoomend', switchBoundaryByZoom);
             switchBoundaryByZoom();
-            {% endmacro %}
-            """
-        )
-
-
-class LeafletPane(MacroElement):
-    def __init__(self, pane_name, z_index):
-        super().__init__()
-        self._name = "LeafletPane"
-        self.pane_name = pane_name
-        self.z_index = z_index
-        self._template = Template(
-            """
-            {% macro script(this, kwargs) %}
-            var map = {{this._parent.get_name()}};
-            if (!map.getPane('{{this.pane_name}}')) {
-                map.createPane('{{this.pane_name}}');
-            }
-            map.getPane('{{this.pane_name}}').style.zIndex = {{this.z_index}};
-            map.getPane('{{this.pane_name}}').style.pointerEvents = 'auto';
-            {% endmacro %}
-            """
-        )
-
-
-class CurrentLocationControl(MacroElement):
-    def __init__(self, region_lookup, zoom_level=ZOOM_HOSPITAL_LEVEL):
-        super().__init__()
-        self._name = "CurrentLocationControl"
-        self.region_lookup = json.dumps(region_lookup, ensure_ascii=False)
-        self.zoom_level = zoom_level
-        self._template = Template(
-            """
-            {% macro html(this, kwargs) %}
-            <style>
-            .er-location-control {
-                background: #ffffff;
-                border: 1px solid #cbd5e1;
-                border-radius: 8px;
-                box-shadow: 0 6px 18px rgba(15, 23, 42, 0.18);
-                cursor: pointer;
-                height: 36px;
-                width: 36px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #1d4ed8;
-                font-size: 18px;
-                line-height: 1;
-            }
-            .er-location-control:hover {
-                background: #eff6ff;
-            }
-            </style>
-            {% endmacro %}
-            {% macro script(this, kwargs) %}
-            var map = {{this._parent.get_name()}};
-            var regionLookup = {{this.region_lookup}};
-            var zoomLevel = {{this.zoom_level}};
-            var locationMarker = null;
-            var accuracyCircle = null;
-
-            function pointInRing(lon, lat, ring) {
-                var inside = false;
-
-                for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-                    var xi = ring[i][0], yi = ring[i][1];
-                    var xj = ring[j][0], yj = ring[j][1];
-                    var intersect = ((yi > lat) !== (yj > lat)) &&
-                        (lon < (xj - xi) * (lat - yi) / ((yj - yi) || 1e-12) + xi);
-
-                    if (intersect) {
-                        inside = !inside;
-                    }
-                }
-
-                return inside;
-            }
-
-            function pointInGeometry(lon, lat, geometry) {
-                if (!geometry || !geometry.coordinates) {
-                    return false;
-                }
-
-                if (geometry.type === 'Polygon') {
-                    return geometry.coordinates.length > 0 && pointInRing(lon, lat, geometry.coordinates[0]);
-                }
-
-                if (geometry.type === 'MultiPolygon') {
-                    for (var i = 0; i < geometry.coordinates.length; i++) {
-                        if (geometry.coordinates[i].length > 0 && pointInRing(lon, lat, geometry.coordinates[i][0])) {
-                            return true;
-                        }
-                    }
-                }
-
-                return false;
-            }
-
-            function findRegion(lat, lon) {
-                for (var i = 0; i < regionLookup.length; i++) {
-                    if (pointInGeometry(lon, lat, regionLookup[i].geometry)) {
-                        return {
-                            sido: regionLookup[i].sido,
-                            sigungu: regionLookup[i].sigungu
-                        };
-                    }
-                }
-
-                return null;
-            }
-
-            function sendGpsValue(payload) {
-                payload.timestamp = payload.timestamp || new Date().toISOString();
-                var message = {
-                    isStreamlitMessage: true,
-                    type: 'streamlit:setComponentValue',
-                    value: {
-                        gps_filter: payload
-                    }
-                };
-
-                window.parent.postMessage(message, '*');
-            }
-
-            var LocateControl = L.Control.extend({
-                options: { position: 'bottomright' },
-                onAdd: function(map) {
-                    var container = L.DomUtil.create('button', 'er-location-control leaflet-bar');
-                    container.type = 'button';
-                    container.title = '현재 위치로 이동';
-                    container.innerHTML = '⌖';
-                    L.DomEvent.disableClickPropagation(container);
-                    L.DomEvent.on(container, 'click', function(event) {
-                        L.DomEvent.stop(event);
-
-                        if (!navigator.geolocation) {
-                            sendGpsValue({ ok: false, error: '이 브라우저에서는 위치 정보를 사용할 수 없습니다.' });
-                            return;
-                        }
-
-                        navigator.geolocation.getCurrentPosition(
-                            function(position) {
-                                var lat = position.coords.latitude;
-                                var lon = position.coords.longitude;
-                                var accuracy = position.coords.accuracy || 0;
-                                var region = findRegion(lat, lon);
-                                var latlng = [lat, lon];
-
-                                if (locationMarker) {
-                                    map.removeLayer(locationMarker);
-                                }
-
-                                if (accuracyCircle) {
-                                    map.removeLayer(accuracyCircle);
-                                }
-
-                                locationMarker = L.circleMarker(latlng, {
-                                    radius: 7,
-                                    color: '#ffffff',
-                                    weight: 2,
-                                    fillColor: '#2563eb',
-                                    fillOpacity: 0.95,
-                                    pane: 'currentLocationPane'
-                                }).addTo(map).bindPopup('현재 위치');
-
-                                accuracyCircle = L.circle(latlng, {
-                                    radius: accuracy,
-                                    color: '#2563eb',
-                                    fillColor: '#60a5fa',
-                                    fillOpacity: 0.12,
-                                    weight: 1,
-                                    pane: 'currentLocationPane'
-                                }).addTo(map);
-
-                                map.setView(latlng, zoomLevel);
-
-                                sendGpsValue({
-                                    ok: true,
-                                    lat: lat,
-                                    lon: lon,
-                                    accuracy: accuracy,
-                                    sido: region ? region.sido : null,
-                                    sigungu: region ? region.sigungu : null,
-                                    timestamp: new Date().toISOString()
-                                });
-                            },
-                            function(error) {
-                                sendGpsValue({ ok: false, error: error.message || '현재 위치를 확인하지 못했습니다.' });
-                            },
-                            {
-                                enableHighAccuracy: true,
-                                timeout: 10000,
-                                maximumAge: 60000
-                            }
-                        );
-                    });
-                    return container;
-                }
-            });
-
-            map.addControl(new LocateControl());
             {% endmacro %}
             """
         )
@@ -2049,113 +1729,9 @@ def run_realtime_update(update_sido, update_sigungu):
         f"{update_status_text}"
     )
 
-    load_data.clear()
+    st.cache_data.clear()
 
     return True
-
-
-def make_region_pair_options(df, selected_sidos):
-    if not selected_sidos:
-        scope_df = df
-    else:
-        scope_df = df[df["sido"].isin(selected_sidos)]
-
-    options = (
-        scope_df[["sido", "sigungu"]]
-        .dropna()
-        .drop_duplicates()
-        .sort_values(["sido", "sigungu"])
-    )
-
-    return [tuple(row) for row in options.to_records(index=False)]
-
-
-def format_region_pair(pair):
-    return f"{pair[0]} {pair[1]}"
-
-
-def normalize_region_pair_values(values):
-    normalized = []
-
-    for value in values or []:
-        if isinstance(value, tuple) and len(value) == 2:
-            normalized.append((value[0], value[1]))
-        elif isinstance(value, list) and len(value) == 2:
-            normalized.append((value[0], value[1]))
-
-    return normalized
-
-
-def get_update_target_for_selection(selected_sidos, selected_region_pairs):
-    if not selected_sidos:
-        return NATIONWIDE_VALUE, ALL_SIGUNGU_VALUE, f"{NATIONWIDE_VALUE} {ALL_SIGUNGU_VALUE}", True
-
-    if len(selected_sidos) == 1 and len(selected_region_pairs) == 0:
-        sido = selected_sidos[0]
-        return sido, ALL_SIGUNGU_VALUE, f"{sido} 전체", True
-
-    if len(selected_region_pairs) == 1:
-        sido, sigungu = selected_region_pairs[0]
-        return sido, sigungu, f"{sido} {sigungu}", True
-
-    return None, None, "여러 지역", False
-
-
-def describe_selected_region(selected_sidos, selected_region_pairs):
-    if not selected_sidos:
-        return NATIONWIDE_VALUE
-
-    if selected_region_pairs:
-        if len(selected_region_pairs) == 1:
-            return format_region_pair(selected_region_pairs[0])
-
-        return f"{len(selected_region_pairs):,}개 시군구"
-
-    if len(selected_sidos) == 1:
-        return f"{selected_sidos[0]} 전체"
-
-    return f"{len(selected_sidos):,}개 시도"
-
-
-def apply_pending_gps_filter(df):
-    gps_filter = st.session_state.pop(PENDING_GPS_FILTER_KEY, None)
-
-    if not isinstance(gps_filter, dict):
-        return
-
-    if gps_filter.get("ok") and gps_filter.get("sido") and gps_filter.get("sigungu"):
-        gps_sido = gps_filter["sido"]
-        gps_sigungu = gps_filter["sigungu"]
-        valid_pair = (
-            (df["sido"] == gps_sido)
-            & (df["sigungu"] == gps_sigungu)
-        ).any()
-
-        st.session_state[GPS_LOCATION_KEY] = {
-            "lat": gps_filter.get("lat"),
-            "lon": gps_filter.get("lon"),
-            "accuracy": gps_filter.get("accuracy"),
-        }
-
-        if valid_pair:
-            st.session_state[SIDO_FILTER_KEY] = [gps_sido]
-            st.session_state[SIGUNGU_FILTER_KEY] = [(gps_sido, gps_sigungu)]
-            st.session_state[GPS_FILTER_NOTICE_KEY] = f"현재 위치 기준으로 {gps_sido} {gps_sigungu}를 선택했습니다."
-        else:
-            st.session_state[GPS_FILTER_NOTICE_KEY] = f"현재 위치는 {gps_sido} {gps_sigungu}로 확인했지만 데이터에서 해당 지역을 찾지 못했습니다."
-
-        return
-
-    if gps_filter.get("ok"):
-        st.session_state[GPS_LOCATION_KEY] = {
-            "lat": gps_filter.get("lat"),
-            "lon": gps_filter.get("lon"),
-            "accuracy": gps_filter.get("accuracy"),
-        }
-        st.session_state[GPS_FILTER_NOTICE_KEY] = "현재 위치는 확인했지만 행정구역 경계 안에서 시군구를 찾지 못했습니다."
-        return
-
-    st.session_state[GPS_FILTER_NOTICE_KEY] = gps_filter.get("error", "현재 위치를 확인하지 못했습니다.")
 
 
 # ============================================================
@@ -2191,13 +1767,13 @@ if not os.path.exists(SIGUNGU_GEOJSON_PATH):
 data_refresh_token = st.session_state.get("data_refresh_token", 0)
 df = load_data(DATA_PATH, data_refresh_token)
 
-sido_geojson_mtime = os.path.getmtime(SIDO_GEOJSON_PATH)
-sigungu_geojson_mtime = os.path.getmtime(SIGUNGU_GEOJSON_PATH)
-sido_feature_items = get_sido_feature_items(SIDO_GEOJSON_PATH, sido_geojson_mtime)
-sigungu_feature_items = get_sigungu_feature_items(SIGUNGU_GEOJSON_PATH, sigungu_geojson_mtime)
-location_region_lookup = build_location_region_lookup(SIGUNGU_GEOJSON_PATH, sigungu_geojson_mtime)
+df["realtime_updated_at_parsed"] = df["realtime_updated_at"].apply(parse_datetime_yyyymmddhhmmss)
+df["collected_at_parsed"] = pd.to_datetime(df["collected_at"], errors="coerce")
 
-apply_pending_gps_filter(df)
+df = df[~df["sido"].isin(EXCLUDE_SIDO)].copy()
+
+sido_geojson = load_geojson(SIDO_GEOJSON_PATH)
+sigungu_geojson = load_geojson(SIGUNGU_GEOJSON_PATH)
 
 
 # ============================================================
@@ -2208,41 +1784,69 @@ with st.sidebar:
     st.header("조건 설정")
     st.caption("지역을 먼저 좁힌 뒤 필요한 진료 자원을 선택하세요.")
 
-    sido_options = sorted(df["sido"].dropna().unique().tolist())
-    st.session_state.setdefault(SIDO_FILTER_KEY, [])
-    st.session_state.setdefault(SIGUNGU_FILTER_KEY, [])
-
-    selected_sidos = st.multiselect(
+    sido_options = [NATIONWIDE_VALUE] + sorted(df["sido"].dropna().unique().tolist())
+    selected_sido = st.selectbox(
         "시도",
         sido_options,
-        key=SIDO_FILTER_KEY,
-        placeholder="전국을 보려면 비워두세요",
-        help="비워두면 전국 기준으로 표시합니다."
+        help="전국을 선택하면 시도 단위 요약만 표시합니다."
     )
 
-    selected_sidos = list(selected_sidos)
-    region_pair_options = make_region_pair_options(df, selected_sidos)
-    valid_region_pair_set = set(region_pair_options)
+    if selected_sido == NATIONWIDE_VALUE:
+        sigungu_options = [ALL_SIGUNGU_VALUE]
+    else:
+        sigungu_options = [ALL_SIGUNGU_VALUE] + sorted(
+            df.loc[df["sido"] == selected_sido, "sigungu"]
+            .dropna()
+            .unique()
+            .tolist()
+        )
 
-    st.session_state[SIGUNGU_FILTER_KEY] = [
-        pair
-        for pair in normalize_region_pair_values(st.session_state.get(SIGUNGU_FILTER_KEY, []))
-        if pair in valid_region_pair_set
-    ]
-
-    selected_region_pairs = st.multiselect(
+    selected_sigungu = st.selectbox(
         "시군구",
-        region_pair_options,
-        key=SIGUNGU_FILTER_KEY,
-        format_func=format_region_pair,
-        placeholder="시도 전체를 보려면 비워두세요",
-        help="시군구를 여러 개 선택할 수 있습니다."
+        sigungu_options,
+        help="시군구를 좁히면 병원 마커 표시 범위가 줄어듭니다."
     )
 
-    selected_region_pairs = normalize_region_pair_values(selected_region_pairs)
+    st.divider()
+    st.subheader("데이터 업데이트")
+    st.caption("공공 API를 다시 호출해 현재 선택한 지역의 최신 값을 반영합니다.")
 
-    if GPS_FILTER_NOTICE_KEY in st.session_state:
-        st.info(st.session_state[GPS_FILTER_NOTICE_KEY])
+    if st.button("선택 지역 업데이트", use_container_width=True, type="primary"):
+        if selected_sido == NATIONWIDE_VALUE:
+            update_sido = NATIONWIDE_VALUE
+            update_sigungu = ALL_SIGUNGU_VALUE
+            target_text = f"{NATIONWIDE_VALUE} {ALL_SIGUNGU_VALUE}"
+
+        elif selected_sigungu == ALL_SIGUNGU_VALUE:
+            update_sido = selected_sido
+            update_sigungu = ALL_SIGUNGU_VALUE
+            target_text = f"{selected_sido} 전체"
+
+        else:
+            update_sido = selected_sido
+            update_sigungu = selected_sigungu
+            target_text = f"{selected_sido} {selected_sigungu}"
+
+        with st.spinner(f"{target_text} 최신 데이터를 다시 수집하는 중입니다..."):
+            ok = run_realtime_update(update_sido, update_sigungu)
+
+        if ok:
+            st.session_state["data_refresh_token"] = datetime.now().isoformat()
+            st.success("업데이트 완료")
+            st.rerun()
+
+    status_summary = (
+        st.session_state["last_update_message"]
+        if "last_update_message" in st.session_state
+        else format_update_status_summary(load_update_status_json())
+    )
+
+    if not status_summary and os.path.exists(UPDATE_STATUS_TEXT_PATH):
+        status_summary = load_update_status_text()
+
+    if status_summary:
+        with st.expander("최근 업데이트 상태", expanded=False):
+            st.info(status_summary)
 
     st.divider()
     st.subheader("자원 조건")
@@ -2275,40 +1879,6 @@ with st.sidebar:
     else:
         st.info("자원 조건 없이 지역 전체를 표시합니다.")
 
-    st.divider()
-    st.subheader("데이터 업데이트")
-    st.caption("공공 API를 다시 호출해 현재 선택한 지역의 최신 값을 반영합니다.")
-
-    update_sido, update_sigungu, target_text, can_update_selected_region = get_update_target_for_selection(
-        selected_sidos,
-        selected_region_pairs,
-    )
-
-    if not can_update_selected_region:
-        st.caption("업데이트는 전국, 단일 시도 전체, 단일 시군구 선택일 때 실행할 수 있습니다.")
-
-    if st.button("선택 지역 업데이트", width="stretch", type="primary", disabled=not can_update_selected_region):
-        with st.spinner(f"{target_text} 최신 데이터를 다시 수집하는 중입니다..."):
-            ok = run_realtime_update(update_sido, update_sigungu)
-
-        if ok:
-            st.session_state["data_refresh_token"] = datetime.now().isoformat()
-            st.success("업데이트 완료")
-            st.rerun()
-
-    status_summary = (
-        st.session_state["last_update_message"]
-        if "last_update_message" in st.session_state
-        else format_update_status_summary(load_update_status_json())
-    )
-
-    if not status_summary and os.path.exists(UPDATE_STATUS_TEXT_PATH):
-        status_summary = load_update_status_text()
-
-    if status_summary:
-        with st.expander("최근 업데이트 상태", expanded=False):
-            st.info(status_summary)
-
 
 # ============================================================
 # 12. 지역 필터 + 카테고리 필터
@@ -2316,20 +1886,20 @@ with st.sidebar:
 
 region_filtered = df.copy()
 
-if selected_sidos:
-    region_filtered = region_filtered[region_filtered["sido"].isin(selected_sidos)]
+if selected_sido != NATIONWIDE_VALUE:
+    region_filtered = region_filtered[region_filtered["sido"] == selected_sido]
 
-if selected_region_pairs:
-    selected_region_pairs_df = pd.DataFrame(selected_region_pairs, columns=["sido", "sigungu"])
-    region_filtered = region_filtered.merge(
-        selected_region_pairs_df,
-        on=["sido", "sigungu"],
-        how="inner",
-    )
+if selected_sigungu != ALL_SIGUNGU_VALUE:
+    region_filtered = region_filtered[region_filtered["sigungu"] == selected_sigungu]
 
 filtered = filter_by_categories(region_filtered, selected_labels, condition_mode)
 
-selected_region_text = describe_selected_region(selected_sidos, selected_region_pairs)
+if selected_sido == NATIONWIDE_VALUE:
+    selected_region_text = "전국"
+elif selected_sigungu == ALL_SIGUNGU_VALUE:
+    selected_region_text = f"{selected_sido} 전체"
+else:
+    selected_region_text = f"{selected_sido} {selected_sigungu}"
 
 category_summary_text = (
     f"{len(selected_labels)}개 자원 조건"
@@ -2416,17 +1986,17 @@ else:
     center_lat = df["lat"].mean()
     center_lon = df["lon"].mean()
 
-if not selected_sidos:
+if selected_sido == NATIONWIDE_VALUE:
     zoom_start = 7
-elif not selected_region_pairs:
+elif selected_sigungu == ALL_SIGUNGU_VALUE:
     zoom_start = 9
 else:
     zoom_start = 11
 
-hospital_markers_limited = should_limit_hospital_markers_for_scope(
+hospital_markers_limited = should_limit_hospital_markers(
     filtered,
-    selected_sidos,
-    selected_region_pairs,
+    selected_sido,
+    selected_sigungu,
 )
 
 
@@ -2438,26 +2008,21 @@ m = folium.Map(
     location=[center_lat, center_lon],
     zoom_start=zoom_start,
     tiles="CartoDB positron",
-    prefer_canvas=False,
+    prefer_canvas=True,
 )
 
-m.add_child(LeafletPane("hospitalMarkerPane", 650))
-m.add_child(LeafletPane("currentLocationPane", 700))
-m.add_child(CurrentLocationControl(location_region_lookup, zoom_level=ZOOM_HOSPITAL_LEVEL))
-
 sido_layer = build_sido_layer(
-    sido_feature_items=sido_feature_items,
+    sido_geojson=sido_geojson,
     count_df=sido_count_df,
 )
 
 sigungu_layer = build_sigungu_layer(
-    sigungu_feature_items=sigungu_feature_items,
+    sigungu_geojson=sigungu_geojson,
     count_df=sigungu_count_df,
-    selected_sidos=selected_sidos,
-    selected_region_pairs=selected_region_pairs,
+    selected_sido=selected_sido,
 )
 
-hospital_layer = build_hospital_layer(filtered, selected_sidos, selected_region_pairs)
+hospital_layer = build_hospital_layer(filtered, selected_sido, selected_sigungu)
 
 sido_layer.add_to(m)
 sigungu_layer.add_to(m)
@@ -2470,7 +2035,7 @@ m.add_child(
         hospital_layer=hospital_layer,
         sigungu_threshold=ZOOM_SIGUNGU_LEVEL,
         hospital_threshold=ZOOM_HOSPITAL_LEVEL,
-        overview_mode=not selected_sidos,
+        overview_mode=selected_sido == NATIONWIDE_VALUE,
     )
 )
 
@@ -2502,23 +2067,13 @@ if len(filtered) == 0:
         unsafe_allow_html=True,
     )
 
-map_value = st_folium(
+st_folium(
     m,
     width=None,
     height=760,
-    returned_objects=["gps_filter"],
+    returned_objects=[],
     key="er_boundary_map"
 )
-
-gps_filter = (map_value or {}).get("gps_filter")
-
-if isinstance(gps_filter, dict):
-    gps_timestamp = gps_filter.get("timestamp")
-
-    if gps_timestamp and gps_timestamp != st.session_state.get(GPS_LAST_EVENT_KEY):
-        st.session_state[GPS_LAST_EVENT_KEY] = gps_timestamp
-        st.session_state[PENDING_GPS_FILTER_KEY] = gps_filter
-        st.rerun()
 
 if hospital_markers_limited:
     st.warning(
@@ -2598,7 +2153,7 @@ with st.expander("병원 목록 열기", expanded=False):
 
     st.dataframe(
         table_df,
-        width="stretch",
+        use_container_width=True,
         height=360,
         hide_index=True,
     )

@@ -30,9 +30,7 @@ SIGUNGU_GEOJSON_PATH = "data/korea_sigungu.geojson"
 
 EXCLUDE_SIDO = ["제주특별자치도"]
 
-# 줌 단계
-ZOOM_SIGUNGU_LEVEL = 9      # 이 이상이면 시군구 도형
-ZOOM_HOSPITAL_LEVEL = 11    # 이 이상이면 병원 핀포인트 표시
+ZOOM_SWITCH_LEVEL = 9
 
 
 # ============================================================
@@ -405,11 +403,12 @@ def normalize_sigungu_name(name, region_type=None):
 
     name = str(name).strip()
 
+    # southkorea-maps 계열 GeoJSON에서 한글명이 깨진 경우
     if "?" in name:
         return None
 
     aliases = {
-        # 서울
+        # 서울특별시
         "Gangseo": "강서구",
         "Geum-cheon": "금천구",
         "Guro": "구로구",
@@ -422,6 +421,7 @@ def normalize_sigungu_name(name, region_type=None):
         "Dongdaemun": "동대문구",
         "Dongjak": "동작구",
         "Eunpyeong": "은평구",
+        "Gangseo-gu": "강서구",
         "Jongno": "종로구",
         "Jung": "중구",
         "Jungnang": "중랑구",
@@ -436,25 +436,19 @@ def normalize_sigungu_name(name, region_type=None):
         "Yeongdeungpo": "영등포구",
         "Yongsan": "용산구",
 
-        # 부산
-        "Haeundae": "해운대구",
-        "Saha": "사하구",
-        "Sasang": "사상구",
-        "Suyeong": "수영구",
-        "Yeonje": "연제구",
-        "Yeongdo": "영도구",
-        "Gijang": "기장군",
-
         # 인천
         "Bupyeong": "부평구",
+        "Dong": "동구",
         "Gyeyang": "계양구",
+        "Jung": "중구",
         "Michuhol": "미추홀구",
         "Namdong": "남동구",
+        "Seo": "서구",
         "Yeonsu": "연수구",
         "Ganghwa": "강화군",
         "Ongjin": "옹진군",
 
-        # 경기
+        # 경기 주요
         "Suwon": "수원시",
         "Seongnam": "성남시",
         "Goyang": "고양시",
@@ -621,6 +615,15 @@ def normalize_sigungu_name(name, region_type=None):
         "Geochang": "거창군",
         "Hapcheon": "합천군",
 
+        # 부산 일부
+        "Haeundae": "해운대구",
+        "Saha": "사하구",
+        "Sasang": "사상구",
+        "Suyeong": "수영구",
+        "Yeonje": "연제구",
+        "Yeongdo": "영도구",
+        "Gijang": "기장군",
+
         # 대구 일부
         "Suseong": "수성구",
         "Dalseo": "달서구",
@@ -631,7 +634,12 @@ def normalize_sigungu_name(name, region_type=None):
         "Daedeok": "대덕구",
     }
 
-    return aliases.get(name, name)
+    if name in aliases:
+        return aliases[name]
+
+    # fallback: 타입이 Gu/County/City로 있으면 뒤에 구/군/시 붙여보기
+    # 단, 영어 이름을 한글로 바꾸는 건 아니므로 실제 매칭률은 낮음.
+    return name
 
 
 # ============================================================
@@ -1008,56 +1016,42 @@ def build_hospital_layer(filtered_df):
 # ============================================================
 
 class ZoomLayerSwitcher(MacroElement):
-    def __init__(self, sido_layer, sigungu_layer, hospital_layer, sigungu_threshold, hospital_threshold):
+    """
+    줌 레벨에 따라 시도 경계와 시군구 경계를 자동 전환한다.
+    """
+
+    def __init__(self, sido_layer, sigungu_layer, threshold):
         super().__init__()
         self._name = "ZoomLayerSwitcher"
-
         self.sido_layer = sido_layer.get_name()
         self.sigungu_layer = sigungu_layer.get_name()
-        self.hospital_layer = hospital_layer.get_name()
-
-        self.sigungu_threshold = sigungu_threshold
-        self.hospital_threshold = hospital_threshold
+        self.threshold = threshold
 
         self._template = Template(
             """
             {% macro script(this, kwargs) %}
             var map = {{this._parent.get_name()}};
-
             var sidoLayer = {{this.sido_layer}};
             var sigunguLayer = {{this.sigungu_layer}};
-            var hospitalLayer = {{this.hospital_layer}};
-
-            var sigunguThreshold = {{this.sigungu_threshold}};
-            var hospitalThreshold = {{this.hospital_threshold}};
-
-            function setLayerVisible(layer, visible) {
-                if (visible) {
-                    if (!map.hasLayer(layer)) {
-                        map.addLayer(layer);
-                    }
-                } else {
-                    if (map.hasLayer(layer)) {
-                        map.removeLayer(layer);
-                    }
-                }
-            }
+            var threshold = {{this.threshold}};
 
             function switchBoundaryByZoom() {
                 var z = map.getZoom();
 
-                if (z < sigunguThreshold) {
-                    setLayerVisible(sidoLayer, true);
-                    setLayerVisible(sigunguLayer, false);
-                    setLayerVisible(hospitalLayer, false);
-                } else if (z >= sigunguThreshold && z < hospitalThreshold) {
-                    setLayerVisible(sidoLayer, false);
-                    setLayerVisible(sigunguLayer, true);
-                    setLayerVisible(hospitalLayer, false);
+                if (z >= threshold) {
+                    if (map.hasLayer(sidoLayer)) {
+                        map.removeLayer(sidoLayer);
+                    }
+                    if (!map.hasLayer(sigunguLayer)) {
+                        map.addLayer(sigunguLayer);
+                    }
                 } else {
-                    setLayerVisible(sidoLayer, false);
-                    setLayerVisible(sigunguLayer, true);
-                    setLayerVisible(hospitalLayer, true);
+                    if (map.hasLayer(sigunguLayer)) {
+                        map.removeLayer(sigunguLayer);
+                    }
+                    if (!map.hasLayer(sidoLayer)) {
+                        map.addLayer(sidoLayer);
+                    }
                 }
             }
 
@@ -1247,8 +1241,13 @@ with st.sidebar:
 
     st.divider()
 
-    st.caption(f"줌 {ZOOM_SIGUNGU_LEVEL} 이상: 시군구 경계")
-    st.caption(f"줌 {ZOOM_HOSPITAL_LEVEL} 이상: 병원 위치 표시")
+    show_hospital_points = st.checkbox(
+        "병원 위치 점 함께 보기",
+        value=False,
+        help="기본 지도는 행정구역 단위입니다. 정확한 병원 위치가 필요할 때만 켜세요."
+    )
+
+    st.caption(f"줌 레벨 {ZOOM_SWITCH_LEVEL} 이상부터 시군구 경계로 자동 전환됩니다.")
 
 
 # ============================================================
@@ -1311,6 +1310,9 @@ sigungu_count_df = (
     .reset_index()
 )
 
+sido_count_df = sido_count_df[sido_count_df["hospital_count"] > 0].copy()
+sigungu_count_df = sigungu_count_df[sigungu_count_df["hospital_count"] > 0].copy()
+
 
 # ============================================================
 # 15. 지도 중심 설정
@@ -1353,27 +1355,64 @@ sigungu_layer = build_sigungu_layer(
     selected_sido=selected_sido,
 )
 
-hospital_layer = build_hospital_layer(filtered)
-
 sido_layer.add_to(m)
 sigungu_layer.add_to(m)
-hospital_layer.add_to(m)
 
 m.add_child(
     ZoomLayerSwitcher(
         sido_layer=sido_layer,
         sigungu_layer=sigungu_layer,
-        hospital_layer=hospital_layer,
-        sigungu_threshold=ZOOM_SIGUNGU_LEVEL,
-        hospital_threshold=ZOOM_HOSPITAL_LEVEL,
+        threshold=ZOOM_SWITCH_LEVEL,
     )
 )
+
+
+# ============================================================
+# 17. 선택 옵션: 병원 위치 점
+# ============================================================
+
+if show_hospital_points:
+    hospital_layer = folium.FeatureGroup(name="병원 위치", show=True)
+
+    for _, row in filtered.iterrows():
+        hospital_name = row.get("hospital_name", "-")
+        addr = row.get("dutyAddr", "-")
+        emergency_tel = row.get("emergency_tel", "-")
+        updated_at = row.get("realtime_updated_at_parsed", pd.NaT)
+
+        popup_html = f"""
+        <div style="width: 300px;">
+            <h4>{hospital_name}</h4>
+            <b>주소</b><br>{addr}<br><br>
+            <b>응급실 전화</b>: {emergency_tel}<br>
+            <b>응급실 일반 병상</b>: {format_value_for_user(row.get("avail_er_general_beds", None))}<br>
+            <b>수술실</b>: {format_value_for_user(row.get("avail_operating_rooms", None))}<br>
+            <b>일반 중환자실</b>: {format_value_for_user(row.get("avail_icu_general", None))}<br>
+            <b>일반 입원실</b>: {format_value_for_user(row.get("avail_inpatient_general_beds", None))}<br><br>
+            <b>병상정보 갱신시각</b><br>
+            {updated_at.strftime("%Y-%m-%d %H:%M:%S") if pd.notna(updated_at) else "-"}
+        </div>
+        """
+
+        folium.CircleMarker(
+            location=[row["lat"], row["lon"]],
+            radius=4,
+            color="#111827",
+            fill=True,
+            fill_color="#111827",
+            fill_opacity=0.75,
+            opacity=0.9,
+            tooltip=hospital_name,
+            popup=folium.Popup(popup_html, max_width=340),
+        ).add_to(hospital_layer)
+
+    hospital_layer.add_to(m)
 
 folium.LayerControl(collapsed=True).add_to(m)
 
 
 # ============================================================
-# 17. 지도 출력
+# 18. 지도 출력
 # ============================================================
 
 st_folium(
@@ -1386,7 +1425,7 @@ st_folium(
 
 
 # ============================================================
-# 18. 하단 데이터 테이블
+# 19. 하단 데이터 테이블
 # ============================================================
 
 with st.expander("현재 지도에 반영된 병원 데이터 보기", expanded=False):

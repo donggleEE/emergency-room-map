@@ -1,0 +1,6 @@
+﻿ 02_visualization_app.py      | 157 +++++---
+ data/hospital_master.csv     |   2 +-
+ data/hospital_master_raw.csv |   2 +-
+ data/realtime_beds_raw.csv   | 858 +++++++++++++++++++++----------------------
+ data/realtime_beds_wide.csv  | 836 ++++++++++++++++++++---------------------
+ 5 files changed, 947 insertions(+), 908 deletions(-)
